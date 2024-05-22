@@ -18,7 +18,7 @@ export const SocketContextProvider = ({ children }) => {
   const { selectedChat } = useChat();
   useEffect(() => {
     if (authUser) {
-      const socket = io("http://localhost:5000", {
+      const socket = io("https://shraw.onrender.com", {
         query: {
           userId: authUser._id,
           conversationId: selectedChat?._id,
