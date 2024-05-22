@@ -2,6 +2,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
 
 //! file imports
 import authRoutes from "./routes/auth.routes.js";
@@ -11,7 +12,15 @@ import conversationRoutes from "./routes/conversation.routes.js";
 import { app, server } from "./socket/socket.js ";
 
 const PORT = process.env.PORT || 5000;
-
+// Increasing the http request size
+app.use(bodyParser.json({ limit: "100mb" }));
+app.use(
+  bodyParser.urlencoded({
+    limit: "100mb",
+    extended: true,
+    parameterLimit: 50000,
+  })
+);
 dotenv.config(); // Load env variables
 app.use(express.json()); // To extract from req.body
 app.use(cookieParser()); // To parse cookies
