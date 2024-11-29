@@ -1,11 +1,13 @@
 import { useState, useContext } from "react";
 import useNewConversation from "@/hooks/useNewConversation";
 import { Spinner } from "@/components/spinner/Spinner";
-import modalToggleContext from "@/context/modalToggleContext";
+import conversationListContext from "@/context/conversationListContext";
 
 // eslint-disable-next-line react/prop-types
-const NewConversaionModal = () => {
-  const { showModal, setShowModal } = useContext(modalToggleContext);
+const NewConversaionModal = ({ showModal, setShowModal }) => {
+  const { conversationListChanged, setConversationListChanged } = useContext(
+    conversationListContext
+  );
   const [newConversation, setNewConversation] = useState({
     chatName: "",
     description: "",
@@ -14,13 +16,22 @@ const NewConversaionModal = () => {
   const { loading, createNewConversation } = useNewConversation();
 
   const handleChange = (e) => {
-    setNewConversation({ ...newConversation, [e.target.name]: e.target.value });
+    setNewConversation({
+      ...newConversation,
+      [e.target.name]: e.target.value.trimStart(),
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setNewConversation({
+      chatName: newConversation.chatName.trim(),
+      description: newConversation.description.trim(),
+    });
     await createNewConversation(newConversation);
     setShowModal("hidden");
+    // So that the home component re-renders and fetches the new conversation list
+    setConversationListChanged(!conversationListChanged);
   };
 
   return (
@@ -77,7 +88,8 @@ const NewConversaionModal = () => {
                     id="name"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     placeholder="Type Chat Room name"
-                    required=""
+                    required
+                    minLength={3}
                     value={newConversation.chatName}
                     onChange={handleChange}
                   />
@@ -97,6 +109,8 @@ const NewConversaionModal = () => {
                     className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Write Chat Room description here"
                     value={newConversation.description}
+                    minLength={5}
+                    required
                     onChange={handleChange}
                   ></textarea>
                 </div>

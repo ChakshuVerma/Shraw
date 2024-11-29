@@ -58,7 +58,30 @@ export const createConversationController = async (req, res) => {
   }
 };
 
-export const deleteConversationController = async (req, res) => {};
+export const deleteConversationController = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { conversationId } = req.body;
+
+    const conversation = await Conversation.findById({ _id: conversationId });
+    if (!conversation) {
+      res.status(404).json({ error: "Conversation not found" });
+    } else {
+      if (conversation.admin.toString() !== userId.toString()) {
+        res
+          .status(401)
+          .json({
+            error: "You are not authorized to delete this conversation",
+          });
+      } else {
+        await Conversation.findByIdAndDelete({ _id: conversationId });
+        res.status(200).json({ message: "Conversation deleted successfully" });
+      }
+    }
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 export const leaveConversationController = async (req, res) => {
   try {

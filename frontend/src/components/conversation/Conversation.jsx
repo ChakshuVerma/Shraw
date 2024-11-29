@@ -2,21 +2,29 @@
 import { Link } from "react-router-dom";
 import NewChat from "@/components/conversation/newChat";
 import AddMembersToConversation from "@/components/addMembersToConversation/addMembersToConversation";
+import DeleteConversation from "../deleteConversation/deleteConversation";
 import LeaveConversation from "@/components/leaveConversation/leaveConversation";
 
 const Conversation = ({ conv, addChat }) => {
   return (
-    <div className="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 m-6">
+    <div className="max-w-sm px-6 py-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 m-6">
       {addChat ? (
         <NewChat />
       ) : (
         <>
-          <Link to="#">
-            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-              {conv.name}
-            </h5>
-          </Link>
-          <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+          <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white cursor-pointer">
+            {conv.name}
+          </h5>
+          {conv.isAdmin ? (
+            <span className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">
+              Admin
+            </span>
+          ) : (
+            <span className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
+              Member
+            </span>
+          )}
+          <p className="my-3 font-normal text-gray-700 dark:text-gray-400">
             {conv.description}
           </p>
           <Link
@@ -41,7 +49,13 @@ const Conversation = ({ conv, addChat }) => {
             </svg>
           </Link>
           {conv.isAdmin ? (
-            <AddMembersToConversation conversationId={conv._id} />
+            <>
+              <AddMembersToConversation conversationId={conv._id} />
+              <DeleteConversation
+                conversationId={conv._id}
+                conversationName={conv.name}
+              />
+            </>
           ) : (
             <LeaveConversation
               conversationName={conv.name}

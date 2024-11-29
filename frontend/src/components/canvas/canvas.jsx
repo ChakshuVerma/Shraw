@@ -3,17 +3,10 @@ import { useDraw } from "../../hooks/useDraw";
 import { TwitterPicker } from "react-color";
 import useGetMessages from "@/hooks/useGetMessages";
 import useListenMessages from "@/hooks/useListenMessages";
-// import useGetOnlineUsers from "@/hooks/useGetOnlineUsers";
-// import useChat from "@/zustand/useChat";
+
 const CanvasPage = () => {
-  // const { selectedChat } = useChat();
   const { ctx } = useGetMessages();
   useListenMessages();
-  // const onlineUsers = useGetOnlineUsers(selectedChat?._id);
-
-  // useEffect(() => {
-  //   console.log(onlineUsers);
-  // }, [onlineUsers]);
 
   const { canvasRef, onMouseDown, clear, saveImage } = useDraw(drawLine);
   const [color, setColor] = useState("#000");
