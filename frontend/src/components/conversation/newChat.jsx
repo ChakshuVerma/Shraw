@@ -1,9 +1,9 @@
-import NewConversaionModal from "@/components/modals/newConversaionModal";
-import { useState } from "react";
+import NewConversationModal from "@/components/modals/newConversationModal";
+import { useContext } from "react";
+import modalToggleContext from "@/context/modalToggleContext";
 
 const NewChat = () => {
-  const [showModal, setShowModal] = useState("hidden");
-
+  const { setShowModal } = useContext(modalToggleContext);
   return (
     <>
       <svg
@@ -21,7 +21,7 @@ const NewChat = () => {
           d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
         />
       </svg>
-      <NewConversaionModal showModal={showModal} setShowModal={setShowModal} />
+      <NewConversationModal />
     </>
   );
 };
