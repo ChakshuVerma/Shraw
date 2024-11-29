@@ -12,7 +12,7 @@ const AddMembersToConversation = ({ conversationId }) => {
         className="m-4"
         onClick={() => setShowModal("")}
       >
-        Add Members
+        Invite Members
       </Button>
       <AddMembersModal
         showModal={showModal}

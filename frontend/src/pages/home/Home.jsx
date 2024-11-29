@@ -2,13 +2,13 @@ import Logout from "@/components/logout/logout";
 import useGetConversations from "@/hooks/useGetConversation";
 import Conversation from "@/components/conversation/Conversation";
 import { Spinner } from "@/components/spinner/Spinner";
-import modalToggleContext from "@/context/modalToggleContext";
+import modalToggleContext from "@/context/conversationListContext";
 import { useEffect, useState } from "react";
 
 const Home = () => {
   const { loading, getChats } = useGetConversations();
   const [conversations, setConversations] = useState([]);
-  const [showModal, setShowModal] = useState("hidden");
+  const [conversationListChanged, setConversationListChanged] = useState(false);
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -16,13 +16,15 @@ const Home = () => {
       setConversations(chats);
     };
     fetchChats();
-  }, [showModal, getChats]);
+  }, [conversationListChanged, getChats]);
 
   const nameOfUser = JSON.parse(localStorage.getItem("shraw-user")).name;
 
   return (
     <>
-      <modalToggleContext.Provider value={{ showModal, setShowModal }}>
+      <modalToggleContext.Provider
+        value={{ conversationListChanged, setConversationListChanged }}
+      >
         <div className="bg-gray-50 dark:bg-gray-900 md:h-screen p-6 flex flex-col">
           <div className="info-container mb-8">
             <div className="flex justify-between">

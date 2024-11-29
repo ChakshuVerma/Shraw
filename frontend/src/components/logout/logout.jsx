@@ -1,28 +1,28 @@
 import useLogout from "@/hooks/useLogout";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import ConfirmModal from "../modals/confirmModal";
 
 const Logout = () => {
   const { loading, logout } = useLogout();
+  const [response, setResponse] = useState(false);
 
-  const confirmResponse = () => {
-    const answer = confirm("Are you sure you want to logout ? ");
-    if (answer) logout();
-  };
+  if (response) logout();
+
+  const confirmMessage = `Are you sure you want to logout`;
+  const yesMessage = "Logout from Shraw?";
+  const noMessage = "Cancel";
+  const toggalModalMessage = "Logout";
 
   return (
-    <div className="mt-auto">
-      {!loading ? (
-        <Button
-          variant="destructive"
-          onClick={confirmResponse}
-          className="mr-10"
-        >
-          Logout
-        </Button>
-      ) : (
-        <span className="animate-spin h-5 w-5 mr-3"></span>
-      )}
-    </div>
+    !loading && (
+      <ConfirmModal
+        confirmMessage={confirmMessage}
+        yesMessage={yesMessage}
+        noMessage={noMessage}
+        toggalModalMessage={toggalModalMessage}
+        setResponse={setResponse}
+      ></ConfirmModal>
+    )
   );
 };
 

@@ -61,11 +61,11 @@ export const useDraw = (onDraw) => {
     };
     // Add event listeners
     canvasRef.current?.addEventListener("mousemove", handler);
-    window.addEventListener("mouseup", mouseUpHandler);
+    canvasRef.current?.addEventListener("mouseup", mouseUpHandler);
     // Remove event listeners
     return () => {
       canvasRef.current?.removeEventListener("mousemove", handler);
-      window.removeEventListener("mouseup", mouseUpHandler);
+      canvasRef.current?.removeEventListener("mouseup", mouseUpHandler);
     };
   }, [onDraw]);
 
