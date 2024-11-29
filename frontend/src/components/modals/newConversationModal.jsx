@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import useNewConversation from "@/hooks/useNewConversation";
 import { Spinner } from "@/components/spinner/Spinner";
+import modalToggleContext from "@/context/modalToggleContext";
 
 // eslint-disable-next-line react/prop-types
-const NewConversaionModal = ({ showModal, setShowModal }) => {
+const NewConversaionModal = () => {
+  const { showModal, setShowModal } = useContext(modalToggleContext);
   const [newConversation, setNewConversation] = useState({
     chatName: "",
     description: "",

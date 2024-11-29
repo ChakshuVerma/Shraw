@@ -39,8 +39,17 @@ export const createConversationController = async (req, res) => {
     });
 
     if (newConversation) {
-      await newConversation.save();
-      res.status(200).json({ message: "Chat room created succesfully" });
+      const conversation = await Conversation.findOne({
+        name,
+      });
+      if (conversation) {
+        res.status(400).json({
+          error: "You already have a conversation with this name",
+        });
+      } else {
+        await newConversation.save();
+        res.status(200).json({ message: "Chat room created succesfully" });
+      }
     } else {
       res.status(500).json({ error: "Internal server error" });
     }
@@ -48,6 +57,8 @@ export const createConversationController = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const deleteConversationController = async (req, res) => {};
 
 export const leaveConversationController = async (req, res) => {
   try {

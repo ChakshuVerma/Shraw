@@ -5,7 +5,6 @@ const useNewConversation = () => {
   const [loading, setLoading] = useState(false);
 
   const createNewConversation = async (args) => {
-    // console.log(args);
     let { chatName, description } = args;
     chatName = chatName.trim();
     description = description.trim();
