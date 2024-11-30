@@ -15,10 +15,12 @@ export const SocketContextProvider = ({ children }) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const { authUser } = useAuthContext();
 
+  // const connectionURL = "https://shraw.onrender.com";
+  const connectionURL = "http://localhost:5000";
   const { selectedChat } = useChat();
   useEffect(() => {
     if (authUser) {
-      const socket = io("https://shraw.onrender.com", {
+      const socket = io(connectionURL, {
         query: {
           userId: authUser._id,
           conversationId: selectedChat?._id,
