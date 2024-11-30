@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import useNewConversation from "@/hooks/useNewConversation";
 import { Spinner } from "@/components/spinner/Spinner";
 import conversationListContext from "@/context/conversationListContext";
+import { X as Close, Plus } from "lucide-react";
 
 // eslint-disable-next-line react/prop-types
 const NewConversaionModal = ({ showModal, setShowModal }) => {
@@ -30,6 +31,7 @@ const NewConversaionModal = ({ showModal, setShowModal }) => {
     });
     await createNewConversation(newConversation);
     setShowModal("hidden");
+    setNewConversation({ chatName: "", description: "" });
     // So that the home component re-renders and fetches the new conversation list
     setConversationListChanged(!conversationListChanged);
   };
@@ -40,7 +42,7 @@ const NewConversaionModal = ({ showModal, setShowModal }) => {
         id="crud-modal"
         tabIndex="-1"
         aria-hidden="true"
-        className={`${showModal} +  overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-full bg-slate-100`}
+        className={`${showModal} +  overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 max-h-full  bg-black bg-opacity-60 backdrop-blur-sm transition-opacity duration-300`}
       >
         <div className="relative p-4 w-full max-w-md max-h-full">
           <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -54,21 +56,7 @@ const NewConversaionModal = ({ showModal, setShowModal }) => {
                 data-modal-toggle="crud-modal"
                 onClick={() => setShowModal("hidden")}
               >
-                <svg
-                  className="w-3 h-3"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 14 14"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                  />
-                </svg>
+                <Close className="w-5 h-5" />
                 <span className="sr-only">Close modal</span>
               </button>
             </div>
@@ -90,6 +78,7 @@ const NewConversaionModal = ({ showModal, setShowModal }) => {
                     placeholder="Type Chat Room name"
                     required
                     minLength={3}
+                    maxLength={20}
                     value={newConversation.chatName}
                     onChange={handleChange}
                   />
@@ -110,6 +99,7 @@ const NewConversaionModal = ({ showModal, setShowModal }) => {
                     placeholder="Write Chat Room description here"
                     value={newConversation.description}
                     minLength={5}
+                    maxLength={100}
                     required
                     onChange={handleChange}
                   ></textarea>
@@ -123,18 +113,7 @@ const NewConversaionModal = ({ showModal, setShowModal }) => {
                   <Spinner />
                 ) : (
                   <>
-                    <svg
-                      className="me-1 -ms-1 w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                        clipRule="evenodd"
-                      ></path>
-                    </svg>
+                    <Plus className="me-1 -ms-1 w-5 h-5" />
                     Create Chatroom
                   </>
                 )}
