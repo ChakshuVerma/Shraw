@@ -7,7 +7,9 @@ const useListenMessages = () => {
   const { setCtx, ctx } = useChat();
 
   useEffect(() => {
+    console.log("mesg", socket);
     socket?.on("newMessage", (message) => {
+      console.log("message");
       setCtx(message);
     });
 

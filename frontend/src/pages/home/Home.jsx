@@ -3,6 +3,7 @@ import useGetConversations from "@/hooks/useGetConversation";
 import Conversation from "@/components/conversation/Conversation";
 import { Spinner } from "@/components/spinner/Spinner";
 import modalToggleContext from "@/context/conversationListContext";
+import NewChat from "@/components/conversation/newChat";
 import { useEffect, useState } from "react";
 
 const Home = () => {
@@ -40,23 +41,24 @@ const Home = () => {
               A simple tool for collaborative drawing
             </div>
           </div>
-          <div className="allChats flex items-center p-10 bg-slate-100 justify-center flex-wrap overflow-auto">
-            {loading ? (
-              <Spinner />
-            ) : (
-              <>
-                {conversations.map((conversation) => {
-                  return (
-                    <Conversation
-                      key={conversation._id}
-                      conv={conversation}
-                      addChat={false}
-                    />
-                  );
-                })}
-                <Conversation addChat={true} />
-              </>
-            )}
+          <div className="flex justify-center items-center flex-col bg-slate-100 p-6">
+            <div className="allChats flex items-center p-10 justify-center flex-wrap">
+              {loading ? (
+                <Spinner />
+              ) : (
+                <>
+                  {conversations.map((conversation) => {
+                    return (
+                      <Conversation
+                        key={conversation._id}
+                        conv={conversation}
+                      />
+                    );
+                  })}
+                </>
+              )}
+            </div>
+            <NewChat />
           </div>
         </div>
       </modalToggleContext.Provider>

@@ -7,7 +7,7 @@ const useSendMessage = () => {
   const { setCtx, selectedChat } = useChat();
 
   const sendMessage = async (newCtx) => {
-    console.log(newCtx);
+    console.log("send message");
     setLoading(true);
     try {
       const response = await fetch(`/api/messages/send/${selectedChat._id}`, {

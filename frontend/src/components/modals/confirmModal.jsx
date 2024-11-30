@@ -11,19 +11,22 @@ const ConfirmModal = ({
   setResponse,
 }) => {
   const [open, setOpen] = useState(false);
-  //   console.log("open", open);
+
   return (
     <>
-      <Button onClick={() => setOpen(!open)} variant="destructive">
+      <div
+        onClick={() => setOpen(!open)}
+        className="block px-4 py-2 text-sm text- cursor-pointer font-bold text-red-500 hover:bg-gray-100"
+      >
         {toggalModalMessage}
-      </Button>
+      </div>
       {open && (
         <div
           tabIndex="-1"
           className="overflow-y-auto overflow-x-hidden fixed flex top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full  bg-black bg-opacity-60 backdrop-blur-sm transition-opacity duration-300"
         >
           <div className="relative p-4 w-full max-w-md max-h-full">
-            <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 px-2">
               <button
                 className="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                 onClick={() => setOpen(false)}
@@ -45,7 +48,7 @@ const ConfirmModal = ({
                 </svg>
                 <span className="sr-only">Close modal</span>
               </button>
-              <div className="p-4 md:p-5 text-center">
+              <div className="p-4 md:p-5 text-center ">
                 <svg
                   className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200"
                   aria-hidden="true"
