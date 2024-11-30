@@ -8,9 +8,9 @@ const Logout = () => {
 
   if (response) logout();
 
-  const confirmMessage = `Are you sure you want to logout`;
-  const yesMessage = "Logout from Shraw?";
-  const noMessage = "Cancel";
+  const confirmMessage = `Are you sure you want to logout?`;
+  const yesMessage = "Logout from Shraw";
+  const noMessage = "Stay logged in";
   const toggalModalMessage = "Logout";
 
   return (

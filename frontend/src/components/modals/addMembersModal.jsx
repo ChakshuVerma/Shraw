@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Spinner } from "@/components/spinner/Spinner";
 import useAddMembersToConversation from "@/hooks/useAddMembersToConversation";
+import { UserRoundPlus, X as Close } from "lucide-react";
 
 const AddMembersModal = ({ setShowModal, showModal, conversationId }) => {
   const [memberEmail, setMemberEmail] = useState("");
@@ -18,7 +19,7 @@ const AddMembersModal = ({ setShowModal, showModal, conversationId }) => {
         id="crud-modal"
         tabIndex="-1"
         aria-hidden="true"
-        className={`${showModal} +  overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-full bg-slate-100`}
+        className={`${showModal} +  overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 max-h-full  bg-black bg-opacity-60 backdrop-blur-sm transition-opacity duration-300`}
       >
         <div className="relative p-4 w-full max-w-md max-h-full">
           <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -32,21 +33,7 @@ const AddMembersModal = ({ setShowModal, showModal, conversationId }) => {
                 data-modal-toggle="crud-modal"
                 onClick={() => setShowModal("hidden")}
               >
-                <svg
-                  className="w-3 h-3"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 14 14"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                  />
-                </svg>
+                <Close className="w-5 h-5" />
                 <span className="sr-only">Close modal</span>
               </button>
             </div>
@@ -65,7 +52,7 @@ const AddMembersModal = ({ setShowModal, showModal, conversationId }) => {
                     name="newMemberEmail"
                     id="newMemberEmail"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                    placeholder="Type Chat Room name"
+                    placeholder="demoEmail@domain.com"
                     value={memberEmail}
                     onChange={(e) => setMemberEmail(e.target.value)}
                   />
@@ -79,19 +66,8 @@ const AddMembersModal = ({ setShowModal, showModal, conversationId }) => {
                   <Spinner />
                 ) : (
                   <>
-                    <svg
-                      className="me-1 -ms-1 w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                        clipRule="evenodd"
-                      ></path>
-                    </svg>
-                    Add member
+                    <UserRoundPlus className="w-5 h-5 me-2" />
+                    Invite
                   </>
                 )}
               </button>

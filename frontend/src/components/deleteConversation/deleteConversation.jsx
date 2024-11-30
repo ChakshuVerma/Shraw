@@ -12,7 +12,7 @@ const DeleteConveration = ({ conversationId, conversationName }) => {
   );
 
   const confirmMessage = `Are you sure you want to delete ${conversationName}`;
-  const yesMessage = `Delete ${conversationName}`;
+  const yesMessage = `Delete Chatroom`;
   const noMessage = "Cancel";
   const toggalModalMessage = "Delete";
 
