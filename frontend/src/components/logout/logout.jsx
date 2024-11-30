@@ -1,7 +1,7 @@
 import useLogout from "@/hooks/useLogout";
 import { useState } from "react";
 import ConfirmModal from "../modals/confirmModal";
-
+import { Button } from "../ui/button";
 const Logout = () => {
   const { loading, logout } = useLogout();
   const [response, setResponse] = useState(false);
@@ -15,6 +15,7 @@ const Logout = () => {
 
   return (
     !loading && (
+      // <Button variant="destructive">
       <ConfirmModal
         confirmMessage={confirmMessage}
         yesMessage={yesMessage}
@@ -22,6 +23,7 @@ const Logout = () => {
         toggalModalMessage={toggalModalMessage}
         setResponse={setResponse}
       ></ConfirmModal>
+      // </Button>
     )
   );
 };
