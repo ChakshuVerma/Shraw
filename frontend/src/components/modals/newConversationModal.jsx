@@ -30,6 +30,7 @@ const NewConversaionModal = ({ showModal, setShowModal }) => {
     });
     await createNewConversation(newConversation);
     setShowModal("hidden");
+    setNewConversation({ chatName: "", description: "" });
     // So that the home component re-renders and fetches the new conversation list
     setConversationListChanged(!conversationListChanged);
   };
@@ -40,7 +41,7 @@ const NewConversaionModal = ({ showModal, setShowModal }) => {
         id="crud-modal"
         tabIndex="-1"
         aria-hidden="true"
-        className={`${showModal} +  overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-full bg-slate-100`}
+        className={`${showModal} +  overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 max-h-full  bg-black bg-opacity-60 backdrop-blur-sm transition-opacity duration-300`}
       >
         <div className="relative p-4 w-full max-w-md max-h-full">
           <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -90,6 +91,7 @@ const NewConversaionModal = ({ showModal, setShowModal }) => {
                     placeholder="Type Chat Room name"
                     required
                     minLength={3}
+                    maxLength={20}
                     value={newConversation.chatName}
                     onChange={handleChange}
                   />
@@ -110,6 +112,7 @@ const NewConversaionModal = ({ showModal, setShowModal }) => {
                     placeholder="Write Chat Room description here"
                     value={newConversation.description}
                     minLength={5}
+                    maxLength={100}
                     required
                     onChange={handleChange}
                   ></textarea>
