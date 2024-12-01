@@ -33,7 +33,6 @@ export const createConversationController = async (req, res) => {
       name,
       description,
       members: [adminId],
-      messages: [],
       admin: adminId,
       invitations: [],
     });
@@ -42,16 +41,17 @@ export const createConversationController = async (req, res) => {
       const conversation = await Conversation.findOne({
         name,
       });
+
       if (conversation) {
         res.status(400).json({
           error: "You already have a conversation with this name",
         });
       } else {
         await newConversation.save();
-        res.status(200).json({ message: "Chat room created succesfully" });
+        res.status(200).json({ message: "Chat room created successfully" });
       }
     } else {
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({ error: "Conversation creation failed" });
     }
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
@@ -68,11 +68,9 @@ export const deleteConversationController = async (req, res) => {
       res.status(404).json({ error: "Conversation not found" });
     } else {
       if (conversation.admin.toString() !== userId.toString()) {
-        res
-          .status(401)
-          .json({
-            error: "You are not authorized to delete this conversation",
-          });
+        res.status(401).json({
+          error: "You are not authorized to delete this conversation",
+        });
       } else {
         await Conversation.findByIdAndDelete({ _id: conversationId });
         res.status(200).json({ message: "Conversation deleted successfully" });

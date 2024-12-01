@@ -16,23 +16,40 @@ const joinedConversations = {}; // {userId: [conversationId]}
 const activeConversations = {}; // {conversationId: {userId}}
 
 io.on("connection", (socket) => {
-  //   console.log(`A new user connected`);
-  const userId = socket.handshake.query.userId;
-  const conversationId = socket.handshake.query.conversationId;
-  if (userId != "undefined") {
-    // If the user is authenticated
-    userSocketMap[userId] = socket.id;
-    socket.join(conversationId);
-    activeConversations[conversationId] = activeConversations[conversationId]
-      ? { ...activeConversations[conversationId], userId }
-      : { userId };
-    joinedConversations[userId] = joinedConversations[userId]
-      ? [...joinedConversations[userId], conversationId]
-      : [conversationId];
+  const { userId, conversationId } = socket.handshake.query;
+
+  console.log("New connection:", { userId, conversationId });
+  if (!userId || userId === "undefined" || userId === "null") {
+    console.error("Invalid userId:", userId);
+    return socket.disconnect(true);
   }
+
+  userSocketMap[userId] = socket.id;
+
+  if (
+    conversationId &&
+    conversationId !== "undefined" &&
+    conversationId !== "null"
+  ) {
+    if (!joinedConversations[userId]?.includes(conversationId)) {
+      socket.join(conversationId);
+      activeConversations[conversationId] = activeConversations[conversationId]
+        ? { ...activeConversations[conversationId], userId }
+        : { userId };
+      joinedConversations[userId] = joinedConversations[userId]
+        ? [...joinedConversations[userId], conversationId]
+        : [conversationId];
+    }
+  }
+
+  socket.on("checkRoom", ({ roomId }, callback) => {
+    const isInRoom = !!io.sockets.adapter.rooms.get(roomId)?.has(socket.id);
+    callback(isInRoom);
+  });
 
   // socket.on can be used on both frontend and backend
   socket.on("disconnect", () => {
+    console.log("User disconnected:", userId);
     delete userSocketMap[userId];
     joinedConversations[userId]?.forEach((conversationId) => {
       delete activeConversations[conversationId][userId];
@@ -41,7 +58,6 @@ io.on("connection", (socket) => {
       }
     });
     delete joinedConversations[userId];
-    // io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
 });
 

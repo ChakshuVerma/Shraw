@@ -9,13 +9,14 @@ const useGetMessages = () => {
   useEffect(() => {
     const getMessages = async () => {
       setLoading(true);
+
       try {
         const res = await fetch(`/api/messages/${selectedChat._id}`);
         const data = await res.json();
         if (data.err) {
           toast.error(data.err);
         }
-        // console.log(data);
+
         setCtx(data);
       } catch (err) {
         toast.error(err.message);

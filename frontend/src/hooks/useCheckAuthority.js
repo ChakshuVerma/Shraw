@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
-const useEnterConversation = (conversationId) => {
+const useCheckAuthority = (conversationId) => {
   const [loading, setLoading] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [conversationDetails, setConversationDetails] = useState(null);
@@ -37,4 +37,4 @@ const useEnterConversation = (conversationId) => {
   return { loading, isAuthorized, conversationDetails };
 };
 
-export default useEnterConversation;
+export default useCheckAuthority;
