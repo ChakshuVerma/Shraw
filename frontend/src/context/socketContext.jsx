@@ -14,33 +14,55 @@ export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const { authUser } = useAuthContext();
-
-  // const connectionURL = "https://shraw.onrender.com";
-  const connectionURL = "http://localhost:5000";
   const { selectedChat } = useChat();
+
+  const connectionURL = "http://localhost:5000";
+
   useEffect(() => {
-    if (authUser) {
-      const socket = io(connectionURL, {
-        query: {
-          userId: authUser._id,
-          conversationId: selectedChat?._id,
-        },
-      });
-      setSocket(socket);
+    if (!authUser || !selectedChat) return;
+    let newSocket = null;
 
-      // socket.on can be used on both frontend and backend
-      socket.on("getOnlineUsers", (users) => {
-        setOnlineUsers(users);
-      });
-
-      return () => socket.close();
-    } else {
-      if (socket) {
-        socket.close();
-        setSocket(null);
-      }
+    // Disconnect existing socket
+    if (socket) {
+      socket.disconnect();
     }
-  }, [authUser, selectedChat?._id]);
+
+    newSocket = io(connectionURL, {
+      query: {
+        userId: authUser._id,
+        conversationId: selectedChat?._id || "",
+      },
+      // Add reconnection settings
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
+
+    newSocket.on("connect", () => {
+      console.log("Socket connected", newSocket.id);
+      setSocket(newSocket);
+    });
+
+    // Online users tracking
+    newSocket.on("getOnlineUsers", (users) => {
+      setOnlineUsers(users);
+    });
+
+    newSocket.on("disconnect", (reason) => {
+      console.log("Socket disconnected", reason);
+    });
+
+    newSocket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+    });
+
+    // Cleanup function
+    return () => {
+      if (newSocket) {
+        newSocket.disconnect();
+      }
+    };
+  }, [authUser?._id, selectedChat?._id]);
 
   return (
     <SocketContext.Provider value={{ socket, onlineUsers }}>

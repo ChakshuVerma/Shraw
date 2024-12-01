@@ -5,6 +5,7 @@ const conversationSchema = new mongoose.Schema(
     admin: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: true,
     },
     members: [
       {
@@ -13,13 +14,14 @@ const conversationSchema = new mongoose.Schema(
       },
     ],
     currCtx: {
-      type: String,
-      required: true,
-      default: "null",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Message",
+      default: null,
     },
     name: {
       type: String,
       required: true,
+      unique: true,
     },
     description: {
       type: String,

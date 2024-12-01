@@ -3,8 +3,10 @@ import { Spinner } from "@/components/spinner/Spinner";
 import Canvas from "@/components/canvas/canvas";
 import useChat from "@/zustand/useChat";
 import { useEffect } from "react";
+
 const ChatPage = () => {
-  const { setSelectedChat } = useChat();
+  const { selectedChat, setSelectedChat } = useChat();
+
   const conversationId = window.location.href.split("deep-dive/")[1];
   const { isAuthorized, loading, conversationDetails } =
     useCheckAuthority(conversationId);
@@ -15,7 +17,11 @@ const ChatPage = () => {
     } else {
       setSelectedChat(null);
     }
-  }, [isAuthorized, conversationDetails, setSelectedChat]);
+
+    return () => {
+      if (selectedChat) setSelectedChat(null);
+    };
+  }, [isAuthorized, conversationDetails, setSelectedChat, selectedChat]);
 
   return <>{loading ? <Spinner /> : isAuthorized && <Canvas />}</>;
 };

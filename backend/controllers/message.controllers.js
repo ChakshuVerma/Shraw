@@ -15,7 +15,7 @@ export const sendMessageController = async (req, res) => {
     });
 
     if (newMessage) {
-      conversation.currCtx = newCtx;
+      conversation.currCtx = newMessage._id;
     }
 
     await Promise.all([conversation.save(), newMessage.save()]); // This is a better way to save multiple documents in parallel
@@ -30,16 +30,15 @@ export const sendMessageController = async (req, res) => {
 export const getMessageController = async (req, res) => {
   try {
     const { id: userToChatId } = req.params;
-    const senderId = req.user._id;
-    const conversation = await Conversation.findById(userToChatId).populate(
-      "currCtx"
-    );
+    const conversation = await Conversation.findById(userToChatId)
+      .populate("currCtx")
+      .exec();
 
     if (!conversation) {
       return res.status(200).json("");
     }
 
-    const currCtx = conversation.currCtx;
+    const currCtx = conversation.currCtx?.message || "";
     res.status(200).json(currCtx);
   } catch (err) {
     console.log("Get message error", err);
