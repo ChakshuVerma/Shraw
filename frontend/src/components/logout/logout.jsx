@@ -16,10 +16,13 @@ const Logout = () => {
   const noMessage = "Stay logged in";
   const toggalModalMessage = "Logout";
 
+  const extraStyles = "fixed z-50 bg-opacity-70 bg-black";
+  const loadingMessage = "Logging out...";
+
   return (
     <>
       {loading ? (
-        <Spinner />
+        <Spinner extraStyles={extraStyles} loadingMessage={loadingMessage} />
       ) : (
         <ConfirmModal
           confirmMessage={confirmMessage}

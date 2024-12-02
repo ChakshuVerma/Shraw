@@ -41,10 +41,13 @@ const Home = () => {
               A simple tool for collaborative drawing
             </div>
           </div>
-          <div className="flex justify-center items-center flex-col bg-slate-100 p-6">
+          <div className="flex justify-center items-center flex-col bg-slate-100 p-6 h-full">
             <div className="allChats flex items-center p-10 justify-center flex-wrap">
               {loading ? (
-                <Spinner />
+                <Spinner
+                  loadingMessageStyles={"text-black"}
+                  loadingMessage={"Fetching chats..."}
+                />
               ) : (
                 <>
                   {conversations.map((conversation) => {
@@ -55,10 +58,10 @@ const Home = () => {
                       />
                     );
                   })}
+                  <NewChat />
                 </>
               )}
             </div>
-            <NewChat />
           </div>
         </div>
       </modalToggleContext.Provider>
