@@ -45,12 +45,15 @@ const CanvasPage = () => {
           canvasRef.current.height
         );
     };
-  }, [ctx, loading, canvasRef]);
+  }, [ctx, loading, canvasRef, socket?.connected]);
+
+  const extraStyles = "fixed z-50 bg-opacity-60 bg-black";
+  const loadingMessage = "Loading last saved context...";
 
   return (
     <>
       {!socket?.connected ? (
-        <Spinner />
+        <Spinner extraStyles={extraStyles} loadingMessage={loadingMessage} />
       ) : (
         <div className="w-screen flex justify-center items-center min-h-screen">
           <div className="flex flex-col items-center h=[90%] border border-black p-3 m-5 space-y-5">

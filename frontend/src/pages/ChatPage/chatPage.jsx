@@ -23,7 +23,18 @@ const ChatPage = () => {
     };
   }, [isAuthorized, conversationDetails, setSelectedChat, selectedChat]);
 
-  return <>{loading ? <Spinner /> : isAuthorized && <Canvas />}</>;
+  const extraStyles = "fixed z-50 bg-opacity-60 bg-black";
+  const loadingMessage = "Loading conversation...";
+
+  return (
+    <>
+      {loading ? (
+        <Spinner extraStyles={extraStyles} loadingMessage={loadingMessage} />
+      ) : (
+        isAuthorized && <Canvas />
+      )}
+    </>
+  );
 };
 
 export default ChatPage;
