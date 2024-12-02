@@ -18,7 +18,7 @@ const activeConversations = {}; // {conversationId: {userId}}
 io.on("connection", (socket) => {
   const { userId, conversationId } = socket.handshake.query;
 
-  console.log("New connection:", { userId, conversationId });
+  // console.log("New connection:", { userId, conversationId });
   if (!userId || userId === "undefined" || userId === "null") {
     console.error("Invalid userId:", userId);
     return socket.disconnect(true);
@@ -49,7 +49,7 @@ io.on("connection", (socket) => {
 
   // socket.on can be used on both frontend and backend
   socket.on("disconnect", () => {
-    console.log("User disconnected:", userId);
+    // console.log("User disconnected:", userId);
     delete userSocketMap[userId];
     joinedConversations[userId]?.forEach((conversationId) => {
       delete activeConversations[conversationId][userId];
