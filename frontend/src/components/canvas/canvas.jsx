@@ -6,6 +6,10 @@ import useListenMessages from "@/hooks/useListenMessages";
 import { useSocketContext } from "@/context/socketContext";
 import { Spinner } from "@/components/spinner/Spinner";
 
+// When I don't put socket?.connected in the useEffect dependency array, the canvas does not load the last saved context if throttling is enabled in the browser.
+// When I put socket?.connected in the useEffect dependency array, the canvas loads the last saved context of some other chat if throttling is enabled in the browser.
+// Why is this so? How can I fix this? Think about this!
+
 const CanvasPage = () => {
   const { loading, ctx } = useGetMessages();
   useListenMessages();

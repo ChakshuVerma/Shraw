@@ -11,9 +11,11 @@ import messageRoutes from "./routes/message.routes.js";
 import connectToMongoDB from "./db/connect.db.js";
 import conversationRoutes from "./routes/conversation.routes.js";
 import { app, server } from "./socket/socket.js ";
+import cronWrapper from "./utils/scheduler.js";
 
 const __dirname = path.resolve(); // Get the current directory
 
+cronWrapper(); // Start the cron job
 const PORT = process.env.PORT || 5000;
 // Increasing the http request size
 app.use(bodyParser.json({ limit: "100mb" }));
