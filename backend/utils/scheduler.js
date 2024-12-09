@@ -18,7 +18,7 @@ const removeUnverifiedUsers = async () => {
 
 const cronWrapper = () => {
   // A cron job that runs every hour to remove unverified users who have not verified their email in the last 24 hours
-  cron.schedule("* * * * *", removeUnverifiedUsers);
+  cron.schedule("0 * * * *", removeUnverifiedUsers);
 };
 
 export default cronWrapper;
