@@ -45,12 +45,8 @@ export const SocketContextProvider = ({ children }) => {
 
     // ? Logging
     newSocket.on("connect", () => {
-      // console.log("Socket connected", newSocket.id);
       setSocket(newSocket);
     });
-    // newSocket.on("disconnect", (reason) => {
-    //   console.log("Socket disconnected", reason);
-    // });
 
     newSocket.on("connect_error", (error) => {
       console.error("Socket connection error:", error);

@@ -13,12 +13,10 @@ const io = new Server(server, {
 
 const userSocketMap = {}; // {userId: socketId}
 const joinedConversations = {}; // {userId: [conversationId]}
-const activeConversations = {}; // {conversationId: {userId}}
+const activeConversations = {}; // {conversationId: [userId]}
 
 io.on("connection", (socket) => {
   const { userId, conversationId } = socket.handshake.query;
-
-  // console.log("New connection:", { userId, conversationId });
   if (!userId || userId === "undefined" || userId === "null") {
     console.error("Invalid userId:", userId);
     return socket.disconnect(true);
@@ -34,28 +32,33 @@ io.on("connection", (socket) => {
     if (!joinedConversations[userId]?.includes(conversationId)) {
       socket.join(conversationId);
       activeConversations[conversationId] = activeConversations[conversationId]
-        ? { ...activeConversations[conversationId], userId }
-        : { userId };
+        ? [...activeConversations[conversationId], userId]
+        : [userId];
       joinedConversations[userId] = joinedConversations[userId]
         ? [...joinedConversations[userId], conversationId]
         : [conversationId];
     }
-  }
 
-  socket.on("checkRoom", ({ roomId }, callback) => {
-    const isInRoom = !!io.sockets.adapter.rooms.get(roomId)?.has(socket.id);
-    callback(isInRoom);
-  });
+    io.to(conversationId).emit(
+      "getOnlineUsers",
+      activeConversations[conversationId]
+    );
+  }
 
   // socket.on can be used on both frontend and backend
   socket.on("disconnect", () => {
-    // console.log("User disconnected:", userId);
     delete userSocketMap[userId];
     joinedConversations[userId]?.forEach((conversationId) => {
-      delete activeConversations[conversationId][userId];
+      activeConversations[conversationId] = activeConversations[
+        conversationId
+      ].filter((id) => id !== userId);
       if (activeConversations[conversationId].length === 0) {
         delete activeConversations[conversationId];
       }
+      io.to(conversationId).emit(
+        "getOnlineUsers",
+        activeConversations[conversationId]
+      );
     });
     delete joinedConversations[userId];
   });
