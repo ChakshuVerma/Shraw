@@ -1,6 +1,8 @@
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
+import { createAdapter } from "@socket.io/redis-streams-adapter";
+import redisClient from "../config/redis.config.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -9,6 +11,7 @@ const io = new Server(server, {
     origin: ["http://localhost:3000"],
     methods: ["GET", "POST"],
   },
+  adapter: createAdapter(redisClient),
 });
 
 const userSocketMap = {}; // {userId: socketId}
