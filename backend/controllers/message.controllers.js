@@ -1,24 +1,14 @@
 import Message from "../models/message.models.js";
 import Conversation from "../models/conversation.models.js";
 import { io } from "../socket/socket.js";
+import { produceMessage } from "../config/kafka.config.js";
 export const sendMessageController = async (req, res) => {
   try {
     const { id: receiverId } = req.params; // This is actually the id of the chatRoom
     const { newCtx } = req.body;
     const senderId = req.user._id;
 
-    let conversation = await Conversation.findById({ _id: receiverId });
-    const newMessage = new Message({
-      senderId,
-      receiverId,
-      message: newCtx,
-    });
-
-    if (newMessage) {
-      conversation.currCtx = newMessage._id;
-    }
-
-    await Promise.all([conversation.save(), newMessage.save()]); // This is a better way to save multiple documents in parallel
+    produceMessage(senderId, receiverId, newCtx); // This is how you produce a message to Kafka
     io.to(receiverId).emit("newMessage", newCtx); // This is how you emit an event to a specific room (chatRoom in this case)
     res.status(201).json(newCtx);
   } catch (err) {
