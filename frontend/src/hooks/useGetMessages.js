@@ -5,7 +5,6 @@ import useChat from "../zustand/useChat";
 const useGetMessages = () => {
   const [loading, setLoading] = useState(false);
   const { ctx, setCtx, selectedChat } = useChat();
-
   useEffect(() => {
     const getMessages = async () => {
       setLoading(true);
@@ -26,7 +25,7 @@ const useGetMessages = () => {
     };
 
     if (selectedChat?._id) getMessages();
-  }, [selectedChat?._id, setCtx, ctx]);
+  }, [selectedChat?._id, setCtx]);
 
   return { loading, ctx };
 };
