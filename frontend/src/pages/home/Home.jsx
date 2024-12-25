@@ -41,8 +41,8 @@ const Home = () => {
               A simple tool for collaborative drawing
             </div>
           </div>
-          <div className="flex justify-center items-center flex-col bg-slate-100 p-6 h-full">
-            <div className="allChats flex items-center p-10 justify-center flex-wrap">
+          <div className="flex justify-center items-center flex-col bg-slate-100 p-6 h-auto">
+            <div className="flex items-center p-10 justify-center flex-wrap">
               {loading ? (
                 <Spinner
                   loadingMessageStyles={"text-black"}

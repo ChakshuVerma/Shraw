@@ -99,7 +99,7 @@ const NewConversaionModal = ({ showModal, setShowModal }) => {
                     placeholder="Write Chat Room description here"
                     value={newConversation.description}
                     minLength={5}
-                    maxLength={100}
+                    maxLength={200}
                     required
                     onChange={handleChange}
                   ></textarea>

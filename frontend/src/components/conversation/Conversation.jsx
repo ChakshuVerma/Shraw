@@ -11,6 +11,28 @@ import Skeleton from "../skeleton/Skeleton";
 const Conversation = ({ conv }) => {
   const [adminPic, setAdminPic] = useState("");
   const [convoCoverPic, setConvoCoverPic] = useState("");
+  const [lastUpdated, setLastUpdated] = useState("");
+
+  useEffect(() => {
+    const now = new Date();
+    const lastUpd = new Date(conv.updatedAt);
+    const diff = now - lastUpd;
+    if (diff - 24 * 60 * 60 * 1000 > 0) {
+      setLastUpdated(
+        "Updated " + Math.floor(diff / (24 * 60 * 60 * 1000)) + " days ago"
+      );
+    } else if (diff < 60 * 1000) {
+      setLastUpdated("Updated just now");
+    } else {
+      setLastUpdated(
+        "Updated at " +
+          lastUpd.getHours() +
+          ":" +
+          lastUpd.getMinutes().toString().padStart(2, "0")
+      );
+    }
+  }, [conv.updatedAt]);
+
   const dropDownElements = conv.isAdmin
     ? [
         <AddMembersToConversation key={conv._id} conversationId={conv._id} />,
@@ -44,18 +66,18 @@ const Conversation = ({ conv }) => {
     };
   }, [conv.coverPicture]);
 
-  const contentLoaded = adminPic.length > 0 && convoCoverPic.length > 0;
+  const contentLoaded = adminPic.length > 0 && lastUpdated.length > 0;
 
   return (
     <div
-      className="max-w-sm px-6 py-3  border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 m-2 bg-center bg-no-repeat bg-gray-700 bg-blend-multiply bg-cover w-full"
+      className="max-w-sm px-6 py-3 border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 m-2 bg-center bg-no-repeat bg-gray-700 bg-blend-multiply w-full"
       style={{ backgroundImage: `url(${contentLoaded ? convoCoverPic : ""})` }}
     >
       {!contentLoaded ? (
         <Skeleton />
       ) : (
         <>
-          <div className="flex justify-between flex-wrap">
+          <div className="flex justify-between">
             <div className="h-auto w-auto max-w-sm">
               <h5 className="text-2xl pr-6 font-bold tracking-tight text-white dark:text-white cursor-pointer truncate overflow-hidden whitespace-nowrap">
                 {conv.name}
@@ -78,9 +100,17 @@ const Conversation = ({ conv }) => {
               dropDownStyles={"text-white"}
             />
           </div>
-          <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
+          <hr className="h-px my-2 bg-gray-700 border-0 dark:bg-gray-700"></hr>
           <p className="my-3 font-normal text-white dark:text-gray-400 word-break break-all">
             {conv.description}
+          </p>
+          <hr className="h-px my-2 bg-gray-700 border-0 dark:bg-gray-700"></hr>
+          <p className="font-normal text-white dark:text-gray-400 text-xs">
+            {lastUpdated}
+          </p>
+          <p className="mb-3 font-normal text-white dark:text-gray-400 text-xs">
+            {conv.members.length}
+            {" partcipant" + (conv.members.length === 1 ? "" : "s")}
           </p>
           <Link
             to={`/deep-dive/${conv._id}`}
