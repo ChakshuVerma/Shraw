@@ -13,6 +13,10 @@ const conversationSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    coverPicture: {
+      type: String,
+      default: "",
+    },
     currCtx: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Message",

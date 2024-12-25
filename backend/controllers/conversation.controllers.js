@@ -29,12 +29,15 @@ export const createConversationController = async (req, res) => {
     const { name, description } = req.body;
     const adminId = req.user._id;
 
+    const coverPicture =
+      "https://flowbite.s3.amazonaws.com/docs/jumbotron/conference.jpg";
     const newConversation = new Conversation({
       name,
       description,
       members: [adminId],
       admin: adminId,
       invitations: [],
+      coverPicture,
     });
 
     if (newConversation) {
@@ -236,17 +239,20 @@ export const getAllConversations = async (req, res) => {
 
     const joinedConversations = await Conversation.find({
       members: { $all: [loggedInUserId] },
+    }).populate({
+      path: "admin", // Populate the admin field
+      select: "username profilePic", // Fetch the username and profile pic of the admin
     });
     let allConversations = JSON.parse(JSON.stringify(joinedConversations));
     if (!allConversations) {
       return res.status(404).json({ error: "No conversations found" });
     }
-
-    for (let i = 0; i < joinedConversations.length; i++) {
-      allConversations[i].isAdmin =
-        joinedConversations[i].admin.toString() === userId;
-    }
-
+    allConversations = allConversations.map((conversation) => {
+      return {
+        ...conversation,
+        isAdmin: conversation.admin._id.toString() === userId, // Check if the logged-in user is the admin
+      };
+    });
     res.status(200).json(allConversations);
   } catch (err) {
     console.log("Get all chats error", err);

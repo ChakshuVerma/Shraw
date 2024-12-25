@@ -2,7 +2,7 @@
 import { useRef, useState, useEffect } from "react";
 import { EllipsisVertical } from "lucide-react";
 
-const Dropdown = ({ dropDownElements }) => {
+const Dropdown = ({ dropDownElements, dropDownStyles }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -23,6 +23,7 @@ const Dropdown = ({ dropDownElements }) => {
     <div className="flex justify-end" ref={dropdownRef}>
       <button
         id="dropdownButton"
+        className={`${dropDownStyles}`}
         onClick={() => {
           setIsDropdownOpen(!isDropdownOpen);
         }}

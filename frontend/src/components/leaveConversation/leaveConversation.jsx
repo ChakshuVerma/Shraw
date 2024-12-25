@@ -40,7 +40,7 @@ const LeaveConversation = ({ conversationName, conversationId }) => {
   const confirmMessage = `Are you sure you want to leave ${conversationName}? You won't be able to retrieve the data from this conversation`;
   const yesMessage = "Leave Conversation";
   const noMessage = "Cancel";
-  const toggalModalMessage = "Leave this conversation";
+  const toggalModalMessage = "Leave conversation";
 
   return (
     <>
