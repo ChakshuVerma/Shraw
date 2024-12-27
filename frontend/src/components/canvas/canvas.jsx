@@ -4,6 +4,7 @@ import { TwitterPicker } from "react-color";
 import useGetMessages from "@/hooks/useGetMessages";
 import useListenMessages from "@/hooks/useListenMessages";
 import { useSocketContext } from "@/context/socketContext";
+import { Worm, Minus, RectangleHorizontal, Circle } from "lucide-react";
 import { Spinner } from "@/components/spinner/Spinner";
 
 const CanvasPage = () => {
@@ -11,10 +12,12 @@ const CanvasPage = () => {
   const [isCanvasReady, setIsCanvasReady] = useState(false);
 
   const { canvasRef, onMouseDown, clear, saveImage } = useDraw();
+
   useGetMessages(isCanvasReady ? canvasRef : null); // Pass canvasRef only when ready
   useListenMessages(isCanvasReady ? canvasRef : null);
   const [color, setColor] = useState("#000");
   const [brushWidth, setBrushWidth] = useState(5);
+  const [type, setType] = useState("scribble");
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -50,6 +53,36 @@ const CanvasPage = () => {
               defaultValue={brushWidth}
               onChange={(e) => setBrushWidth(e.target.value)}
             ></input>
+            <div className="flex space-x-2 flex-wrap">
+              <button>
+                <Worm
+                  size={24}
+                  onClick={() => setType("scribble")}
+                  className="text-white"
+                />
+              </button>
+              <button>
+                <Minus
+                  size={24}
+                  onClick={() => setType("line")}
+                  className="text-white"
+                />
+              </button>
+              <button>
+                <RectangleHorizontal
+                  size={24}
+                  onClick={() => setType("rectangle")}
+                  className="text-white"
+                />
+              </button>
+              <button>
+                <Circle
+                  size={24}
+                  onClick={() => setType("ellipse")}
+                  className="text-white"
+                />
+              </button>
+            </div>
             <button
               type="button"
               className="border border-black rounded-md px-4 py-2 bg-blue-500 text-white"
@@ -66,7 +99,7 @@ const CanvasPage = () => {
             </button>
           </div>
           <canvas
-            onMouseDown={() => onMouseDown(color, brushWidth)}
+            onMouseDown={() => onMouseDown(color, brushWidth, type)}
             ref={canvasRef}
             width={3000}
             height={2000}

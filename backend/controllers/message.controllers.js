@@ -45,11 +45,7 @@ export const getMessageController = async (req, res) => {
     const messages = await Message.find({ receiverId: userToChatId }).sort({
       createdAt: 1,
     });
-    const strokes = messages.map((message) => ({
-      color: message.color,
-      brushWidth: message.brushWidth,
-      points: message.points,
-    }));
+    const strokes = messages.map((message) => message.strokeData);
 
     res.status(200).json(strokes);
   } catch (err) {

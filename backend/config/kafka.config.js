@@ -75,9 +75,7 @@ export const startConsumer = async () => {
         const newMessage = new Message({
           senderId,
           receiverId,
-          color: newStroke.color,
-          brushWidth: newStroke.brushWidth,
-          points: newStroke.points,
+          strokeData: newStroke,
         });
         await Promise.all([
           newMessage.save(),
