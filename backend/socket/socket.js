@@ -18,6 +18,14 @@ const userSocketMap = {}; // {userId: socketId}
 const joinedConversations = {}; // {userId: [conversationId]}
 const activeConversations = {}; // {conversationId: {userId}}
 
+const attachSocketReq = (req, _, next) => {
+  const socket = userSocketMap[req.user._id];
+  if (socket) {
+    req.socket = io.sockets.sockets.get(socket);
+  }
+  next();
+};
+
 io.on("connection", (socket) => {
   const { userId, conversationId } = socket.handshake.query;
 
@@ -64,4 +72,4 @@ io.on("connection", (socket) => {
   });
 });
 
-export { app, io, server };
+export { app, io, server, attachSocketReq };

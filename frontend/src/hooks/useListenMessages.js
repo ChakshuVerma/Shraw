@@ -4,13 +4,13 @@ import updateCanvas from "@/utils/updateCanvas";
 
 const useListenMessages = (canvasRef) => {
   const { socket } = useSocketContext();
-  const canvasCtx = canvasRef?.current.getContext("2d");
+  const canvasCtx = canvasRef?.current?.getContext("2d");
   useEffect(() => {
     socket?.on("newMessage", (newStroke) => {
-      updateCanvas(canvasCtx, [newStroke]);
+      updateCanvas(canvasRef, [newStroke]);
     });
     socket?.on("clearCanvas", () => {
-      canvasCtx.clearRect(
+      canvasCtx?.clearRect(
         0,
         0,
         canvasRef.current.width,

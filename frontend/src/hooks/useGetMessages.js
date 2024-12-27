@@ -5,7 +5,6 @@ import updateCanvas from "@/utils/updateCanvas";
 
 const useGetMessages = (canvasRef) => {
   const { selectedChat } = useChat();
-  const canvasCtx = canvasRef?.current.getContext("2d");
   useEffect(() => {
     const getMessages = async () => {
       try {
@@ -14,14 +13,14 @@ const useGetMessages = (canvasRef) => {
         if (data.err) {
           toast.error(data.err);
         }
-        updateCanvas(canvasCtx, data);
+        updateCanvas(canvasRef, data);
       } catch (err) {
         toast.error(err.message);
       }
     };
 
     if (selectedChat?._id) getMessages();
-  }, [selectedChat?._id, canvasRef, canvasCtx]);
+  }, [selectedChat?._id, canvasRef]);
 };
 
 export default useGetMessages;

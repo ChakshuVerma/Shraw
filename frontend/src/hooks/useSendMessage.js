@@ -31,7 +31,7 @@ const useSendMessage = () => {
   const clearMessages = async (canvasRef) => {
     setLoading(true);
 
-    const canvasCtx = canvasRef?.current.getContext("2d");
+    const canvasCtx = canvasRef?.current?.getContext("2d");
     try {
       const response = await fetch(`/api/messages/clear/${selectedChat._id}`, {
         method: "DELETE",
@@ -41,7 +41,7 @@ const useSendMessage = () => {
         toast.error(data.error);
       }
 
-      canvasCtx.clearRect(
+      canvasCtx?.clearRect(
         0,
         0,
         canvasRef.current.width,

@@ -15,6 +15,7 @@ const CanvasPage = () => {
   useListenMessages(isCanvasReady ? canvasRef : null);
   const [color, setColor] = useState("#000");
   const [brushWidth, setBrushWidth] = useState(5);
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (canvasRef.current) {

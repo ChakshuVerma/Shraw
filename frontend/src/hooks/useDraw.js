@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import useSendMessage from "@/hooks/useSendMessage";
-
+import rough from "roughjs/bundled/rough.esm";
 export const useDraw = () => {
   const { sendMessage, clearMessages } = useSendMessage();
   const canvasRef = useRef(null);
@@ -17,28 +17,16 @@ export const useDraw = () => {
     setMouseDown(true);
   };
 
-  function drawLine({ prevPoint, currPoint }) {
-    const canvasCtx = canvasRef.current?.getContext("2d");
-    if (!canvasCtx || !currPoint || !mouseDown) return;
-    const { x: currX, y: currY } = currPoint;
-    let startPoint = prevPoint ?? currPoint;
-    canvasCtx.beginPath();
-    canvasCtx.lineWidth = currStroke.current.brushWidth;
-    canvasCtx.strokeStyle = currStroke.current.color;
-    canvasCtx.moveTo(startPoint.x, startPoint.y);
-    canvasCtx.lineTo(currX, currY);
-    canvasCtx.stroke();
+  function scribbleLine({ prevPoint, currPoint }) {
+    if (!canvasRef?.current || !currPoint || !mouseDown) return;
+    const canvasCtx = canvasRef?.current.getContext("2d");
+    const roughCanvas = rough.canvas(canvasCtx.canvas);
 
-    canvasCtx.fillStyle = currStroke.current.color;
-    canvasCtx.beginPath();
-    canvasCtx.arc(
-      currX,
-      currY,
-      currStroke.current.brushWidth / 2,
-      0,
-      Math.PI * 2
-    );
-    canvasCtx.fill();
+    let startPoint = prevPoint ?? currPoint;
+    roughCanvas.line(startPoint.x, startPoint.y, currPoint.x, currPoint.y, {
+      stroke: currStroke.current.color,
+      strokeWidth: currStroke.current.brushWidth,
+    });
   }
 
   const clear = () => {
@@ -58,10 +46,7 @@ export const useDraw = () => {
     const handler = (e) => {
       const currentPoint = computePointsInCanvas(e);
       currStroke.current?.points.push(currentPoint);
-      drawLine({
-        prevPoint: prevPoint.current,
-        currPoint: currentPoint,
-      });
+      scribbleLine({ prevPoint: prevPoint.current, currPoint: currentPoint });
       prevPoint.current = currentPoint;
     };
 
