@@ -60,11 +60,10 @@ export const produceMessage = async (senderId, receiverId, message) => {
 };
 
 export const startConsumer = async () => {
-  console.log("Starting Kafka consumer");
   const consumer = kafka.consumer({ groupId: process.env.KAFKA_GROUP_ID });
   await consumer.connect();
   await consumer.subscribe({ topic: process.env.KAFKA_TOPIC });
-
+  console.log("Kafka consumer started");
   await consumer.run({
     autoCommit: true,
     eachMessage: async ({ message, pause }) => {

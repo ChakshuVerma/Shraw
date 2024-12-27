@@ -16,8 +16,6 @@ import { startConsumer } from "./config/kafka.config.js";
 
 const __dirname = path.resolve(); // Get the current directory
 
-startConsumer(); // Start the kafka consumer
-cronWrapper(); // Start the cron job
 const PORT = process.env.PORT || 5000;
 // Increasing the http request size
 app.use(bodyParser.json({ limit: "100mb" }));
@@ -44,5 +42,7 @@ app.get("*", (req, res) => {
 // Start the server
 server.listen(PORT, () => {
   connectToMongoDB();
+  startConsumer(); // Start the kafka consumer
+  cronWrapper(); // Start the cron job
   console.log(`Server running on port ${PORT}`);
 });
