@@ -6,50 +6,25 @@ import useListenMessages from "@/hooks/useListenMessages";
 import { useSocketContext } from "@/context/socketContext";
 import { Spinner } from "@/components/spinner/Spinner";
 
-// When I don't put socket?.connected in the useEffect dependency array, the canvas does not load the last saved context if throttling is enabled in the browser.
-// When I put socket?.connected in the useEffect dependency array, the canvas loads the last saved context of some other chat if throttling is enabled in the browser.
-// Why is this so? How can I fix this? Think about this!
-
 const CanvasPage = () => {
-  const { loading, ctx } = useGetMessages();
-  useListenMessages();
   const { socket } = useSocketContext();
+  const [isCanvasReady, setIsCanvasReady] = useState(false);
 
-  const { canvasRef, onMouseDown, clear, saveImage } = useDraw(drawLine);
+  const { canvasRef, onMouseDown, clear, saveImage } = useDraw();
+  useGetMessages(isCanvasReady ? canvasRef : null); // Pass canvasRef only when ready
+  useListenMessages(isCanvasReady ? canvasRef : null);
   const [color, setColor] = useState("#000");
   const [brushWidth, setBrushWidth] = useState(5);
-
-  function drawLine({ prevPoint, currPoint, canvasCtx }) {
-    const { x: currX, y: currY } = currPoint;
-    let startPoint = prevPoint ?? currPoint;
-    canvasCtx.beginPath();
-    canvasCtx.lineWidth = brushWidth;
-    canvasCtx.strokeStyle = color;
-    canvasCtx.moveTo(startPoint.x, startPoint.y);
-    canvasCtx.lineTo(currX, currY);
-    canvasCtx.stroke();
-
-    canvasCtx.fillStyle = color;
-    canvasCtx.beginPath();
-    canvasCtx.arc(currX, currY, brushWidth / 2, 0, Math.PI * 2);
-    canvasCtx.fill();
-  }
-
   useEffect(() => {
-    const img = new Image();
-    img.src = ctx;
-    img.onload = () => {
-      canvasRef.current
-        ?.getContext("2d")
-        .drawImage(
-          img,
-          0,
-          0,
-          canvasRef.current.width,
-          canvasRef.current.height
-        );
-    };
-  }, [ctx, loading, canvasRef]);
+    const interval = setInterval(() => {
+      if (canvasRef.current) {
+        setIsCanvasReady(true);
+        clearInterval(interval);
+      }
+    }, 0);
+
+    return () => clearInterval(interval);
+  }, [canvasRef]);
 
   const extraStyles = "fixed z-50 bg-opacity-60 bg-black";
   const loadingMessage = "Loading last saved context...";
@@ -90,11 +65,11 @@ const CanvasPage = () => {
             </button>
           </div>
           <canvas
-            onMouseDown={onMouseDown}
+            onMouseDown={() => onMouseDown(color, brushWidth)}
             ref={canvasRef}
             width={3000}
             height={2000}
-            className=" bg-gray-700"
+            className=" bg-gray-200"
           />
         </div>
       )}

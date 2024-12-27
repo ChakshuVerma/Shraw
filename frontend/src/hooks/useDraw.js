@@ -1,23 +1,48 @@
 import { useEffect, useRef, useState } from "react";
 import useSendMessage from "@/hooks/useSendMessage";
 
-export const useDraw = (onDraw) => {
-  const { sendMessage } = useSendMessage();
+export const useDraw = () => {
+  const { sendMessage, clearMessages } = useSendMessage();
   const canvasRef = useRef(null);
   const prevPoint = useRef(null);
+  const currStroke = useRef(null);
   const [mouseDown, setMouseDown] = useState(false);
 
-  const onMouseDown = () => setMouseDown(true);
+  const onMouseDown = (color, brushWidth) => {
+    currStroke.current = {
+      points: [],
+      color,
+      brushWidth,
+    };
+    setMouseDown(true);
+  };
+
+  function drawLine({ prevPoint, currPoint }) {
+    const canvasCtx = canvasRef.current?.getContext("2d");
+    if (!canvasCtx || !currPoint || !mouseDown) return;
+    const { x: currX, y: currY } = currPoint;
+    let startPoint = prevPoint ?? currPoint;
+    canvasCtx.beginPath();
+    canvasCtx.lineWidth = currStroke.current.brushWidth;
+    canvasCtx.strokeStyle = currStroke.current.color;
+    canvasCtx.moveTo(startPoint.x, startPoint.y);
+    canvasCtx.lineTo(currX, currY);
+    canvasCtx.stroke();
+
+    canvasCtx.fillStyle = currStroke.current.color;
+    canvasCtx.beginPath();
+    canvasCtx.arc(
+      currX,
+      currY,
+      currStroke.current.brushWidth / 2,
+      0,
+      Math.PI * 2
+    );
+    canvasCtx.fill();
+  }
 
   const clear = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    const base64ImageData = canvas.toDataURL("image/png");
-    sendMessage(base64ImageData);
+    clearMessages(canvasRef);
   };
 
   const saveImage = () => {
@@ -32,13 +57,10 @@ export const useDraw = (onDraw) => {
   useEffect(() => {
     const handler = (e) => {
       const currentPoint = computePointsInCanvas(e);
-      const canvasCtx = canvasRef.current?.getContext("2d");
-      if (!canvasCtx || !currentPoint || !mouseDown) return;
-
-      onDraw({
+      currStroke.current?.points.push(currentPoint);
+      drawLine({
         prevPoint: prevPoint.current,
         currPoint: currentPoint,
-        canvasCtx,
       });
       prevPoint.current = currentPoint;
     };
@@ -56,18 +78,20 @@ export const useDraw = (onDraw) => {
     const mouseUpHandler = () => {
       setMouseDown(false);
       prevPoint.current = null;
-      const base64ImageData = canvasRef.current.toDataURL("image/png");
-      sendMessage(base64ImageData);
+      if (currStroke.current.points.length > 0) sendMessage(currStroke.current);
+      currStroke.current = {};
     };
     // Add event listeners
-    canvasRef.current?.addEventListener("mousemove", handler);
-    canvasRef.current?.addEventListener("mouseup", mouseUpHandler);
+    if (mouseDown) {
+      canvasRef.current?.addEventListener("mousemove", handler);
+      canvasRef.current?.addEventListener("mouseup", mouseUpHandler);
+    }
     // Remove event listeners
     return () => {
       canvasRef.current?.removeEventListener("mousemove", handler);
       canvasRef.current?.removeEventListener("mouseup", mouseUpHandler);
     };
-  }, [onDraw]);
+  }, [mouseDown]);
 
   return { canvasRef, onMouseDown, clear, saveImage };
 };

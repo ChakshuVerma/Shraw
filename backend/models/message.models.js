@@ -12,8 +12,24 @@ const messageSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    message: {
+    points: [
+      {
+        x: {
+          type: Number,
+          required: true,
+        },
+        y: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
+    color: {
       type: String,
+      required: true,
+    },
+    brushWidth: {
+      type: Number,
       required: true,
     },
   },

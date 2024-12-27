@@ -1,18 +1,27 @@
 import { useSocketContext } from "@/context/socketContext";
-import useChat from "@/zustand/useChat";
 import { useEffect } from "react";
+import updateCanvas from "@/utils/updateCanvas";
 
-const useListenMessages = () => {
+const useListenMessages = (canvasRef) => {
   const { socket } = useSocketContext();
-  const { setCtx, ctx } = useChat();
-
+  const canvasCtx = canvasRef?.current.getContext("2d");
   useEffect(() => {
-    socket?.on("newMessage", (message) => {
-      setCtx(message);
+    socket?.on("newMessage", (newStroke) => {
+      updateCanvas(canvasCtx, [newStroke]);
     });
-
-    return () => socket?.off("newMessage");
-  }, [socket, setCtx, ctx]);
+    socket?.on("clearCanvas", () => {
+      canvasCtx.clearRect(
+        0,
+        0,
+        canvasRef.current.width,
+        canvasRef.current.height
+      );
+    });
+    return () => {
+      socket?.off("newMessage");
+      socket?.off("clearCanvas");
+    };
+  }, [socket, canvasCtx, canvasRef]);
 };
 
 export default useListenMessages;

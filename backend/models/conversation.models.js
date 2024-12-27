@@ -17,11 +17,6 @@ const conversationSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    currCtx: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Message",
-      default: null,
-    },
     name: {
       type: String,
       required: true,
@@ -37,6 +32,10 @@ const conversationSchema = new mongoose.Schema(
         default: [],
       },
     ],
+    totalActions: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
