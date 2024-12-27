@@ -59,8 +59,8 @@ const CanvasPage = () => {
       {!socket?.connected ? (
         <Spinner extraStyles={extraStyles} loadingMessage={loadingMessage} />
       ) : (
-        <div className="w-screen flex justify-center items-center min-h-screen">
-          <div className="flex flex-col items-center h=[90%] border border-black p-3 m-5 space-y-5">
+        <div className="relative w-full h-full overflow-auto">
+          <div className="flex flex-col items-center border border-black p-3 space-y-5 fixed top-[50%] translate-y-[-50%] left-[10px] bg-black">
             <TwitterPicker
               triangle="hide"
               width="150px"
@@ -92,9 +92,9 @@ const CanvasPage = () => {
           <canvas
             onMouseDown={onMouseDown}
             ref={canvasRef}
-            width={1000}
-            height={700}
-            className="border border-black rounded-md"
+            width={3000}
+            height={2000}
+            className=" bg-gray-700"
           />
         </div>
       )}
