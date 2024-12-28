@@ -1,4 +1,5 @@
 import rough from "roughjs/bundled/rough.esm";
+import { DrawingMethods, ShapeFill } from "@/constants/constants";
 
 const updateCanvas = (canvasRef, strokes) => {
   if (!canvasRef?.current || strokes.length === 0) return;
@@ -6,16 +7,16 @@ const updateCanvas = (canvasRef, strokes) => {
   const roughCanvas = rough.canvas(canvasCtx.canvas);
   strokes.forEach((newStroke) => {
     switch (newStroke.type) {
-      case "scribble":
+      case DrawingMethods.SCRIBBLE:
         drawScribble(roughCanvas, newStroke);
         break;
-      case "rectangle":
+      case DrawingMethods.RECTANGLE:
         drawRectange(roughCanvas, newStroke);
         break;
-      case "ellipse":
+      case DrawingMethods.ELLIPSE:
         drawEllipse(roughCanvas, newStroke);
         break;
-      case "line":
+      case DrawingMethods.LINE:
         drawLine(roughCanvas, newStroke);
         break;
       default:
@@ -42,7 +43,7 @@ const drawRectange = (roughCanvas, newStroke) => {
   roughCanvas.rectangle(x1, y1, length, width, {
     stroke: newStroke.color,
     strokeWidth: newStroke.brushWidth,
-    fill: "solid",
+    fill: ShapeFill.SOLID,
   });
 };
 
@@ -59,7 +60,7 @@ const drawEllipse = (roughCanvas, newStroke) => {
   roughCanvas.ellipse(centerX, centerY, width, height, {
     stroke: newStroke.color,
     strokeWidth: newStroke.brushWidth,
-    fill: "solid",
+    fill: ShapeFill.SOLID,
   });
 };
 

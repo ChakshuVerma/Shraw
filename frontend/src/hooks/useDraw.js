@@ -1,16 +1,30 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import useSendMessage from "@/hooks/useSendMessage";
 import rough from "roughjs/bundled/rough.esm";
+import { DrawingMethods, ShapeFill } from "@/constants/constants";
 
 export const useDraw = () => {
   const { sendMessage, clearMessages } = useSendMessage();
   const canvasRef = useRef(null);
   const prevPoint = useRef(null);
+  const roughCanvasRef = useRef(null);
+  const savedImageRef = useRef(null);
+  const [startPos, setStartPos] = useState({});
   const [currStroke, setCurrStroke] = useState({});
   const [mouseDown, setMouseDown] = useState(false);
-  // const generator = rough.generator();
 
-  const onMouseDown = (color, brushWidth, type) => {
+  const onMouseDown = (event, color, brushWidth, type) => {
+    if (!canvasRef?.current) return;
+    const canvas = canvasRef.current;
+    roughCanvasRef.current ??= rough.canvas(canvas);
+    if (!savedImageRef.current) {
+      savedImageRef.current = document.createElement("canvas");
+      savedImageRef.current.width = canvas.width;
+      savedImageRef.current.height = canvas.height;
+    }
+    const savedCtx = savedImageRef.current.getContext("2d");
+    savedCtx.clearRect(0, 0, canvas.width, canvas.height);
+    savedCtx.drawImage(canvas, 0, 0);
     setCurrStroke({
       points: [],
       color,
@@ -18,17 +32,13 @@ export const useDraw = () => {
       type,
     });
     setMouseDown(true);
+    const initPoint = computePointsInCanvas(event);
+    setStartPos(initPoint);
+    prevPoint.current = initPoint;
   };
 
   const scribbleLine = ({ previousPoint, currentPoint }) => {
-    if (!canvasRef?.current || !currentPoint || !mouseDown) return;
-    // currStroke.current?.points.push(currentPoint);
-    setCurrStroke((prev) => ({
-      ...prev,
-      points: [...prev.points, currentPoint],
-    }));
-    const canvasCtx = canvasRef?.current.getContext("2d");
-    const roughCanvas = rough.canvas(canvasCtx.canvas);
+    const roughCanvas = roughCanvasRef.current;
 
     let startPoint = previousPoint ?? currentPoint;
     roughCanvas.line(
@@ -42,99 +52,111 @@ export const useDraw = () => {
       }
     );
     prevPoint.current = currentPoint;
+    setCurrStroke((prev) => ({
+      ...prev,
+      points: [...prev.points, currentPoint],
+    }));
   };
 
-  const straightLine = ({ currentPoint }) => {
-    if (!canvasRef?.current || !currentPoint || !mouseDown) return;
-    if (currStroke.points.length === 0) {
-      setCurrStroke((prev) => ({
-        ...prev,
-        points: [currentPoint, currentPoint],
-      }));
-    } else {
-      setCurrStroke((prev) => ({
-        ...prev,
-        points: [prev.points[0], currentPoint],
-      }));
-    }
-    const canvasCtx = canvasRef?.current.getContext("2d");
-    canvasCtx.clearRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height);
-    const roughCanvas = rough.canvas(canvasCtx.canvas);
-    if (currStroke.points.length < 2) return;
-    roughCanvas.line(
-      currStroke.points[0].x,
-      currStroke.points[0].y,
-      currStroke.points[1].x,
-      currStroke.points[1].y,
+  const redrawOnRoughCanvas = () => {
+    const roughCanvas = roughCanvasRef.current;
+    const roughCanvasCtx = roughCanvas.canvas.getContext("2d");
+    roughCanvasCtx.clearRect(
+      0,
+      0,
+      canvasRef.current.width,
+      canvasRef.current.height
+    );
+    roughCanvasCtx.drawImage(savedImageRef.current, 0, 0);
+  };
+
+  const drawStraightLine = ({ currentPoint }) => {
+    redrawOnRoughCanvas();
+    roughCanvasRef.current.line(
+      startPos.x,
+      startPos.y,
+      currentPoint.x,
+      currentPoint.y,
       {
         stroke: currStroke.color,
         strokeWidth: currStroke.brushWidth,
       }
     );
+    setCurrStroke((prev) => ({
+      ...prev,
+      points: [startPos, currentPoint],
+    }));
   };
 
-  const rectangle = ({ currentPoint }) => {
-    if (!canvasRef?.current || !currentPoint || !mouseDown) return;
-    if (currStroke.points.length === 0) {
-      setCurrStroke((prev) => ({
-        ...prev,
-        points: [currentPoint, currentPoint],
-      }));
-    } else {
-      setCurrStroke((prev) => ({
-        ...prev,
-        points: [prev.points[0], currentPoint],
-      }));
-    }
-    const canvasCtx = canvasRef?.current.getContext("2d");
-    canvasCtx.clearRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height);
-    const roughCanvas = rough.canvas(canvasCtx.canvas);
-    if (currStroke.points.length < 2) return;
-    const width = currStroke.points[1].x - currStroke.points[0].x;
-    const height = currStroke.points[1].y - currStroke.points[0].y;
-    roughCanvas.rectangle(
-      currStroke.points[0].x,
-      currStroke.points[0].y,
-      width,
-      height,
+  const drawRectangle = ({ currentPoint }) => {
+    redrawOnRoughCanvas();
+    roughCanvasRef.current.rectangle(
+      startPos.x,
+      startPos.y,
+      currentPoint.x - startPos.x,
+      currentPoint.y - startPos.y,
       {
         stroke: currStroke.color,
         strokeWidth: currStroke.brushWidth,
-        fill: "solid",
+        fill: ShapeFill.SOLID,
       }
     );
+    setCurrStroke((prev) => ({
+      ...prev,
+      points: [startPos, currentPoint],
+    }));
   };
 
-  const ellipse = ({ currentPoint }) => {
-    if (!canvasRef?.current || !currentPoint || !mouseDown) return;
-    if (currStroke.points.length === 0) {
-      setCurrStroke((prev) => ({
-        ...prev,
-        points: [currentPoint, currentPoint],
-      }));
-    } else {
-      setCurrStroke((prev) => ({
-        ...prev,
-        points: [prev.points[0], currentPoint],
-      }));
-    }
-    const canvasCtx = canvasRef?.current.getContext("2d");
-    canvasCtx.clearRect(0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height);
-    const roughCanvas = rough.canvas(canvasCtx.canvas);
-    if (currStroke.points.length < 2) return;
-    const centerX = (currStroke.points[0].x + currStroke.points[1].x) / 2;
-    const centerY = (currStroke.points[0].y + currStroke.points[1].y) / 2;
-    const height = Math.abs(currStroke.points[1].y - currStroke.points[0].y);
-    const width = Math.abs(currStroke.points[1].x - currStroke.points[0].x);
-    roughCanvas.ellipse(centerX, centerY, width, height, {
+  const drawEllipse = ({ currentPoint }) => {
+    redrawOnRoughCanvas();
+
+    const centerX = (startPos.x + currentPoint.x) / 2;
+    const centerY = (startPos.y + currentPoint.y) / 2;
+    const height = Math.abs(currentPoint.y - startPos.y);
+    const width = Math.abs(currentPoint.x - startPos.x);
+
+    roughCanvasRef.current.ellipse(centerX, centerY, width, height, {
       stroke: currStroke.color,
       strokeWidth: currStroke.brushWidth,
-      fill: "solid",
+      fill: ShapeFill.SOLID,
     });
+    setCurrStroke((prev) => ({
+      ...prev,
+      points: [startPos, currentPoint],
+    }));
   };
 
   const clear = () => {
     clearMessages(canvasRef);
+  };
+
+  const onMouseMove = (e) => {
+    if (!mouseDown) return;
+    const currentPoint = computePointsInCanvas(e);
+    switch (currStroke.type) {
+      case DrawingMethods.SCRIBBLE:
+        scribbleLine({ previousPoint: prevPoint.current, currentPoint });
+        break;
+      case DrawingMethods.LINE:
+        drawStraightLine({ currentPoint });
+        break;
+      case DrawingMethods.RECTANGLE:
+        drawRectangle({ currentPoint });
+        break;
+      case DrawingMethods.ELLIPSE:
+        drawEllipse({ currentPoint });
+        break;
+      default:
+        break;
+    }
+  };
+
+  const onMouseUp = () => {
+    if (!currStroke?.points) return;
+    setMouseDown(false);
+    prevPoint.current = null;
+    if (currStroke.points.length > 0) sendMessage(currStroke);
+    setCurrStroke({});
   };
 
   const saveImage = () => {
@@ -146,54 +168,14 @@ export const useDraw = () => {
     link.click(); // clicking link to download image
   };
 
-  useEffect(() => {
-    const handler = (e) => {
-      const currentPoint = computePointsInCanvas(e);
-      switch (currStroke.type) {
-        case "scribble":
-          scribbleLine({ previousPoint: prevPoint.current, currentPoint });
-          break;
-        case "line":
-          straightLine({ currentPoint });
-          break;
-        case "rectangle":
-          rectangle({ currentPoint });
-          break;
-        case "ellipse":
-          ellipse({ currentPoint });
-          break;
-        default:
-          break;
-      }
-    };
+  const computePointsInCanvas = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    return { x, y };
+  };
 
-    const computePointsInCanvas = (e) => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      return { x, y };
-    };
-
-    const mouseUpHandler = () => {
-      setMouseDown(false);
-      prevPoint.current = null;
-      if (currStroke.points.length > 0) sendMessage(currStroke);
-      setCurrStroke({});
-    };
-    // Add event listeners
-    if (mouseDown) {
-      canvasRef.current?.addEventListener("mousemove", handler);
-      canvasRef.current?.addEventListener("mouseup", mouseUpHandler);
-    }
-    // Remove event listeners
-    return () => {
-      canvasRef.current?.removeEventListener("mousemove", handler);
-      canvasRef.current?.removeEventListener("mouseup", mouseUpHandler);
-    };
-  }, [mouseDown, currStroke]);
-
-  return { canvasRef, onMouseDown, clear, saveImage };
+  return { canvasRef, onMouseDown, clear, saveImage, onMouseMove, onMouseUp };
 };

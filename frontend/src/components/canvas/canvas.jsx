@@ -14,6 +14,7 @@ import {
   Palette,
   SlidersHorizontal,
 } from "lucide-react";
+import { DrawingMethods } from "@/constants/constants";
 import { Spinner } from "@/components/spinner/Spinner";
 
 const CanvasPage = () => {
@@ -21,9 +22,10 @@ const CanvasPage = () => {
   const [isCanvasReady, setIsCanvasReady] = useState(false);
   const [color, setColor] = useState("#000");
   const [brushWidth, setBrushWidth] = useState(5);
-  const [type, setType] = useState("scribble");
+  const [type, setType] = useState(DrawingMethods.SCRIBBLE);
 
-  const { canvasRef, onMouseDown, clear, saveImage } = useDraw();
+  const { canvasRef, onMouseDown, clear, saveImage, onMouseMove, onMouseUp } =
+    useDraw();
   useGetMessages(isCanvasReady ? canvasRef : null); // Pass canvasRef only when ready
   useListenMessages(isCanvasReady ? canvasRef : null);
 
@@ -73,39 +75,51 @@ const CanvasPage = () => {
                 </div>
               </div>
             </div>
-            <button>
+            <button onClick={() => setType(DrawingMethods.SCRIBBLE)}>
               <div className="cursor-pointer active:scale-50 active:shadow-xl active:bg-gray-200 transition-all duration-200">
                 <Brush
                   size={24}
-                  style={{ strokeWidth: 3, color }}
-                  onClick={() => setType("scribble")}
+                  style={{
+                    strokeWidth: 3,
+                    color: type === DrawingMethods.SCRIBBLE ? color : "black",
+                    fill: type === DrawingMethods.SCRIBBLE && color,
+                  }}
                 />
               </div>
             </button>
-            <button>
+            <button onClick={() => setType(DrawingMethods.LINE)}>
               <div className="cursor-pointer active:scale-50 active:shadow-xl active:bg-gray-200 transition-all duration-200">
                 <Pencil
                   size={24}
-                  style={{ strokeWidth: 3, color }}
-                  onClick={() => setType("line")}
+                  style={{
+                    strokeWidth: 3,
+                    color: type === DrawingMethods.LINE ? color : "black",
+                    fill: type === DrawingMethods.LINE && color,
+                  }}
                 />
               </div>
             </button>
-            <button>
-              <div className="cursor-pointer active:scale-50 active:shadow-xl active:bg-gray-200 transition-all duration-200">
+            <button onClick={() => setType(DrawingMethods.RECTANGLE)}>
+              <div className="cursor-pointer active:scale-50 active:shadow-xl active:bg-gray-200 transition-all duration-200 ">
                 <RectangleHorizontal
                   size={24}
-                  style={{ strokeWidth: 3, color }}
-                  onClick={() => setType("rectangle")}
+                  style={{
+                    strokeWidth: 3,
+                    color: type === DrawingMethods.RECTANGLE ? color : "black",
+                    fill: type === DrawingMethods.RECTANGLE && color,
+                  }}
                 />
               </div>
             </button>
-            <button>
+            <button onClick={() => setType(DrawingMethods.ELLIPSE)}>
               <div className="cursor-pointer active:scale-50 active:shadow-xl active:bg-gray-200 transition-all duration-200">
                 <Circle
                   size={24}
-                  style={{ strokeWidth: 3, color }}
-                  onClick={() => setType("ellipse")}
+                  style={{
+                    strokeWidth: 3,
+                    color: type === DrawingMethods.ELLIPSE ? color : "black",
+                    fill: type === DrawingMethods.ELLIPSE && color,
+                  }}
                 />
               </div>
             </button>
@@ -121,7 +135,10 @@ const CanvasPage = () => {
             </button>
           </div>
           <canvas
-            onMouseDown={() => onMouseDown(color, brushWidth, type)}
+            className="cursor-crosshair"
+            onMouseDown={(e) => onMouseDown(e, color, brushWidth, type)}
+            onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp}
             ref={canvasRef}
             width={3000}
             height={2000}
