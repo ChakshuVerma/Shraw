@@ -1,3 +1,4 @@
+import { APIEndpoints } from "@/constants/constants";
 import { useAuthContext } from "@/context/authContext";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -10,7 +11,7 @@ const useLogin = () => {
     if (!success) return;
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch(APIEndpoints.LOGIN, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -1,11 +1,13 @@
 import toast from "react-hot-toast";
 import { useState } from "react";
+import { APIEndpoints } from "@/constants/constants";
+
 const useDeleteConversation = () => {
   const [loading, setLoading] = useState(false);
   const deleteConversation = async (conversationId) => {
     setLoading(true);
     try {
-      const res = await fetch("/api/conversations/delete", {
+      const res = await fetch(`${APIEndpoints.CONVERSATION}/delete`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conversationId }),

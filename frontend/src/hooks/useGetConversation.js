@@ -1,3 +1,4 @@
+import { APIEndpoints } from "@/constants/constants";
 import { useState, useCallback } from "react";
 import toast from "react-hot-toast";
 
@@ -8,7 +9,7 @@ const useGetConversations = () => {
     let conversations = [];
     setLoading(true);
     try {
-      const res = await fetch("/api/conversations");
+      const res = await fetch(`${APIEndpoints.CONVERSATION}`);
       const data = await res.json();
 
       if (data.error) {

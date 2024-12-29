@@ -1,3 +1,4 @@
+import { APIEndpoints } from "@/constants/constants";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -11,13 +12,16 @@ const JoinConversation = () => {
         const conversationId = queryParameters.get("id");
         const url = window.location.href;
 
-        const res = await fetch(`/api/conversations/join/${conversationId}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            url,
-          }),
-        });
+        const res = await fetch(
+          `${APIEndpoints.CONVERSATION}/join/${conversationId}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              url,
+            }),
+          }
+        );
 
         const data = await res.json();
 

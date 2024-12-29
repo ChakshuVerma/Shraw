@@ -1,3 +1,4 @@
+import { APIEndpoints } from "@/constants/constants";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -12,7 +13,7 @@ const VerifyUser = () => {
           queryParameters.get("verificationString");
         const userId = queryParameters.get("id");
 
-        const res = await fetch("/api/auth/verify-email", {
+        const res = await fetch(APIEndpoints.VERIFY_EMAIL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

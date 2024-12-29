@@ -1,3 +1,4 @@
+import { APIEndpoints } from "@/constants/constants";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -12,7 +13,7 @@ const useNewConversation = () => {
     if (!success) return;
     setLoading(true);
     try {
-      const res = await fetch("/api/conversations/create", {
+      const res = await fetch(`${APIEndpoints.CONVERSATION}/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

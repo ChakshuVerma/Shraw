@@ -1,3 +1,4 @@
+import { APIEndpoints } from "@/constants/constants";
 import useChat from "../zustand/useChat";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -10,13 +11,16 @@ const useSendMessage = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/messages/send/${selectedChat._id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ newStroke }),
-      });
+      const response = await fetch(
+        `${APIEndpoints.MESSAGE}/send/${selectedChat._id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ newStroke }),
+        }
+      );
       const data = await response.json();
       if (data.error) {
         toast.error(data.error);
@@ -33,9 +37,12 @@ const useSendMessage = () => {
 
     const canvasCtx = canvasRef?.current?.getContext("2d");
     try {
-      const response = await fetch(`/api/messages/clear/${selectedChat._id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `${APIEndpoints.MESSAGE}/clear/${selectedChat._id}`,
+        {
+          method: "DELETE",
+        }
+      );
       const data = await response.json();
       if (data.error) {
         toast.error(data.error);
