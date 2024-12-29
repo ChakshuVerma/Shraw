@@ -1,15 +1,11 @@
 import ConfirmModal from "../modals/confirmModal";
 import useDeleteConversation from "@/hooks/useDeleteConversation";
-import { useState, useContext, useEffect } from "react";
-import conversationListContext from "@/context/conversationListContext";
+import { useState, useEffect } from "react";
 
 // eslint-disable-next-line react/prop-types
 const DeleteConveration = ({ conversationId, conversationName }) => {
   const [response, setResponse] = useState(false);
   const { loading, deleteConversation } = useDeleteConversation();
-  const { conversationListChanged, setConversationListChanged } = useContext(
-    conversationListContext
-  );
 
   const confirmMessage = `Are you sure you want to delete ${conversationName}`;
   const yesMessage = `Delete Chatroom`;
@@ -19,16 +15,9 @@ const DeleteConveration = ({ conversationId, conversationName }) => {
   useEffect(() => {
     if (response) {
       deleteConversation(conversationId);
-      setConversationListChanged(!conversationListChanged);
       setResponse(false);
     }
-  }, [
-    response,
-    conversationId,
-    conversationListChanged,
-    deleteConversation,
-    setConversationListChanged,
-  ]);
+  }, [response, conversationId, deleteConversation]);
 
   return (
     !loading && (

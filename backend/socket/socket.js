@@ -9,7 +9,6 @@ const io = new Server(server, {
     origin: ["http://localhost:3000"],
     methods: ["GET", "POST"],
   },
-  // adapter: createAdapter(redisClient),
 });
 
 redisSubClient.subscribe(process.env.REDIS_CHANNEL);

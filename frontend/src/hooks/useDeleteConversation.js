@@ -1,8 +1,12 @@
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { APIEndpoints } from "@/constants/constants";
+import conversationListContext from "@/context/conversationListContext";
 
 const useDeleteConversation = () => {
+  const { conversationListChanged, setConversationListChanged } = useContext(
+    conversationListContext
+  );
   const [loading, setLoading] = useState(false);
   const deleteConversation = async (conversationId) => {
     setLoading(true);
@@ -18,6 +22,7 @@ const useDeleteConversation = () => {
         throw new Error(data.error);
       }
       toast.success("Chatroom deleted successfully");
+      setConversationListChanged(!conversationListChanged);
     } catch (err) {
       toast.error(err.message);
     } finally {
