@@ -16,7 +16,7 @@ const io = new Server(server, {
 
 const userSocketMap = {}; // {userId: {socketId, name}}
 const joinedConversations = {}; // {userId: [conversationId]}
-const activeConversations = {}; // {conversationId: {userId}}
+const activeConversations = {}; // {conversationId: [{userId, name, socketId}]}
 
 const attachSocketReq = (req, _, next) => {
   const socket = userSocketMap[req.user._id].socketId;
@@ -43,13 +43,19 @@ io.on("connection", (socket) => {
     if (!joinedConversations[userId]?.includes(conversationId)) {
       socket.join(conversationId);
       activeConversations[conversationId] = activeConversations[conversationId]
-        ? { ...activeConversations[conversationId], userId }
-        : { userId };
+        ? {
+            ...activeConversations[conversationId],
+            [userId]: { userId, name, socketId: socket.id },
+          }
+        : { [userId]: { userId, name, socketId: socket.id } };
       joinedConversations[userId] = joinedConversations[userId]
         ? [...joinedConversations[userId], conversationId]
         : [conversationId];
     }
-    io.to(conversationId).emit("getOnlineUsers", Object.values(userSocketMap));
+    io.to(conversationId).emit(
+      "getOnlineUsers",
+      Object.values(activeConversations[conversationId])
+    );
   }
 
   socket.on("checkRoom", ({ roomId }, callback) => {
@@ -59,6 +65,7 @@ io.on("connection", (socket) => {
 
   // socket.on can be used on both frontend and backend
   socket.on("disconnect", () => {
+    // console.log("User disconnected:", userId);
     delete userSocketMap[userId];
     joinedConversations[userId]?.forEach((conversationId) => {
       delete activeConversations[conversationId][userId];
