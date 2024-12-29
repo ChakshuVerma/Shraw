@@ -4,6 +4,10 @@ import { create } from "zustand";
 const useChat = create((set) => ({
   selectedChat: null,
   setSelectedChat: (selectedChat) => set({ selectedChat }),
+  onlineUsers: [],
+  setOnlineUsers: (onlineUsers) => set({ onlineUsers }),
+  onlineUserColorMap: {},
+  setOnlineUserColorMap: (onlineUserColorMap) => set({ onlineUserColorMap }),
 }));
 
 export default useChat;

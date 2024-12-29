@@ -11,12 +11,11 @@ export const ShapeFill = Object.freeze({
 });
 
 export const APIEndpoints = Object.freeze({
-  BASE_URL: "http://localhost:5000",
   LOGIN: "/api/auth/login",
   SIGNUP: "/api/auth/signup",
   LOGOUT: "/api/auth/logout",
   VERIFY_EMAIL: "/api/auth/verify-email",
   CONVERSATION: "/api/conversations",
   MESSAGE: "/api/messages",
-  SOCKET_SERVER: "http://localhost:5000",
+  SOCKET_SERVER: import.meta.env.VITE_SOCKET_SERVER,
 });

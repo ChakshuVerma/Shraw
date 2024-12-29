@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import { useAuthContext } from "./authContext";
+import updateOnlineUsersColorMap from "@/utils/updateOnlineUsersColorMap";
 import useChat from "@/zustand/useChat";
 import io from "socket.io-client";
 import { APIEndpoints } from "@/constants/constants";
@@ -13,9 +14,9 @@ export const useSocketContext = () => {
 // eslint-disable-next-line react/prop-types
 export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
-  const [onlineUsers, setOnlineUsers] = useState([]);
   const { authUser } = useAuthContext();
-  const { selectedChat } = useChat();
+  const { selectedChat, setOnlineUsers, setOnlineUserColorMap, colorMap } =
+    useChat();
 
   useEffect(() => {
     if (!authUser || !selectedChat) return;
@@ -38,19 +39,15 @@ export const SocketContextProvider = ({ children }) => {
       reconnectionDelay: 1000,
     });
 
-    // Online users tracking
-    newSocket.on("getOnlineUsers", (users) => {
-      setOnlineUsers(users);
-    });
-
     // ? Logging
     newSocket.on("connect", () => {
-      // console.log("Socket connected", newSocket.id);
       setSocket(newSocket);
     });
-    // newSocket.on("disconnect", (reason) => {
-    //   console.log("Socket disconnected", reason);
-    // });
+
+    newSocket.on("getOnlineUsers", (usersList) => {
+      setOnlineUsers(usersList);
+      setOnlineUserColorMap(updateOnlineUsersColorMap({ colorMap, usersList }));
+    });
 
     newSocket.on("connect_error", (error) => {
       console.error("Socket connection error:", error);
@@ -65,7 +62,7 @@ export const SocketContextProvider = ({ children }) => {
   }, [authUser?._id, selectedChat?._id]);
 
   return (
-    <SocketContext.Provider value={{ socket, onlineUsers }}>
+    <SocketContext.Provider value={{ socket }}>
       {children}
     </SocketContext.Provider>
   );

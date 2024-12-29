@@ -1,9 +1,7 @@
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
-import { createAdapter } from "@socket.io/redis-streams-adapter";
-import redisClient from "../config/redis.config.js";
-
+import { redisSubClient } from "../config/redis.config.js";
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -11,7 +9,21 @@ const io = new Server(server, {
     origin: ["http://localhost:3000"],
     methods: ["GET", "POST"],
   },
-  adapter: createAdapter(redisClient),
+  // adapter: createAdapter(redisClient),
+});
+
+redisSubClient.subscribe(process.env.REDIS_CHANNEL);
+
+// Listen for incoming messages from Redis
+redisSubClient.on("message", (channel, message) => {
+  if (channel === process.env.REDIS_CHANNEL) {
+    // Parse the message if it's JSON formatted
+    const data = JSON.parse(message);
+    // Broadcast the message to relevant clients using socket.io
+    if (data?.receiverId) {
+      io.to(data.receiverId).emit("newMessage", data);
+    }
+  }
 });
 
 const userSocketMap = {}; // {userId: {socketId, name}}
@@ -35,11 +47,8 @@ io.on("connection", (socket) => {
   }
 
   userSocketMap[userId] = { socketId: socket.id, name };
-  if (
-    conversationId &&
-    conversationId !== "undefined" &&
-    conversationId !== "null"
-  ) {
+
+  if (conversationId) {
     if (!joinedConversations[userId]?.includes(conversationId)) {
       socket.join(conversationId);
       activeConversations[conversationId] = activeConversations[conversationId]
@@ -52,6 +61,8 @@ io.on("connection", (socket) => {
         ? [...joinedConversations[userId], conversationId]
         : [conversationId];
     }
+
+    // Emit the online users list immediately after user joins the room
     io.to(conversationId).emit(
       "getOnlineUsers",
       Object.values(activeConversations[conversationId])
@@ -65,7 +76,6 @@ io.on("connection", (socket) => {
 
   // socket.on can be used on both frontend and backend
   socket.on("disconnect", () => {
-    // console.log("User disconnected:", userId);
     delete userSocketMap[userId];
     joinedConversations[userId]?.forEach((conversationId) => {
       delete activeConversations[conversationId][userId];
@@ -74,7 +84,10 @@ io.on("connection", (socket) => {
       }
     });
     delete joinedConversations[userId];
-    io.emit("getOnlineUsers", Object.values(userSocketMap));
+    io.to(conversationId).emit(
+      "getOnlineUsers",
+      Object.values(activeConversations[conversationId])
+    );
   });
 });
 

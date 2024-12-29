@@ -1,7 +1,7 @@
 import Message from "../models/message.models.js";
 import Conversation from "../models/conversation.models.js";
-import { io } from "../socket/socket.js";
 import { produceMessage } from "../config/kafka.config.js";
+import { redisPubClient } from "../config/redis.config.js";
 
 export const sendMessageController = async (req, res) => {
   try {
@@ -9,6 +9,11 @@ export const sendMessageController = async (req, res) => {
     const { newStroke } = req.body;
     const senderId = req.user._id;
     const socket = req.socket; // This is how you access the socket in the request
+    // This is how you publish a message to Redis
+    await redisPubClient.publish(
+      process.env.REDIS_CHANNEL,
+      JSON.stringify({ senderId, receiverId, newStroke })
+    );
     produceMessage(senderId, receiverId, newStroke); // This is how you produce a message to Kafka
     socket.to(receiverId).emit("newMessage", newStroke); // This is how you emit an event to a specific room (chatRoom in this case)
     res.status(201).json(newStroke);
@@ -46,7 +51,6 @@ export const getMessageController = async (req, res) => {
       createdAt: 1,
     });
     const strokes = messages.map((message) => message.strokeData);
-
     res.status(200).json(strokes);
   } catch (err) {
     console.log("Get message error", err);

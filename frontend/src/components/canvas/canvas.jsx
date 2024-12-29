@@ -3,7 +3,6 @@ import { useDraw } from "../../hooks/useDraw";
 import useGetMessages from "@/hooks/useGetMessages";
 import useListenMessages from "@/hooks/useListenMessages";
 import { useSocketContext } from "@/context/socketContext";
-import useGetOnlineUsers from "@/hooks/useGetOnlineUsers";
 import useChat from "@/zustand/useChat";
 import { DrawingMethods } from "@/constants/constants";
 import { Spinner } from "@/components/spinner/Spinner";
@@ -21,10 +20,7 @@ const CanvasPage = () => {
     useDraw();
   useGetMessages(isCanvasReady ? canvasRef : null); // Pass canvasRef only when ready
   useListenMessages(isCanvasReady ? canvasRef : null);
-  const [onlineUsers, setOnlineUsers] = useState([]);
-  const [colorMap, setColorMap] = useState({});
-  useGetOnlineUsers({ onlineUsers, setOnlineUsers, colorMap, setColorMap });
-  const { selectedChat } = useChat();
+  const { selectedChat, onlineUsers, onlineUserColorMap } = useChat();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -36,8 +32,6 @@ const CanvasPage = () => {
 
     return () => clearInterval(interval);
   }, [canvasRef]);
-
-  useEffect(() => {}, [onlineUsers, colorMap]);
 
   const extraStyles = "fixed z-50 bg-opacity-60 bg-black";
   const loadingMessage = "Loading last saved context...";
@@ -69,7 +63,9 @@ const CanvasPage = () => {
                   <div
                     className="w-10 h-10 border-2 border-black rounded-full dark:border-gray-800 text-sm flex items-center 
                  text-center text-white pl-2 group-hover:scale-110 transition-all duration-200 group-hover:border-3 "
-                    style={{ backgroundColor: colorMap[onlineUser.socketId] }}
+                    style={{
+                      backgroundColor: onlineUserColorMap[onlineUser.socketId],
+                    }}
                   >
                     {getInitials(onlineUser.name)}
                   </div>

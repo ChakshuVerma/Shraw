@@ -6,21 +6,21 @@ dotenv.config();
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
-  host: process.env.HOST,
+  host: process.env.MAIL_HOST,
   port: 587,
   secure: false, // Use `true` for port 465, `false` for all other ports
   auth: {
-    user: process.env.USER,
-    pass: process.env.PASS,
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASSWORD,
   },
 });
 
 export const sendMail = async (email, subject, html) => {
   const mailOptions = {
-    // from: process.env.USER,
+    // from: process.env.MAIL_USER, // sender address
     from: {
       name: "Shraw",
-      address: process.env.USER,
+      address: process.env.MAIL_USER,
     }, // sender address
     to: email, // list of receivers
     subject, // Subject line
@@ -53,7 +53,7 @@ export const addMembersEmail = (
   const token_mail_verification = jwt.sign(mail, process.env.JWT_SECRET_MAIL);
 
   const url =
-    process.env.BASE_URL +
+    process.env.FRONTEND_BASE_URL +
     "join-conversation?id=" +
     conversationId +
     "&verificationString=" +
@@ -74,7 +74,7 @@ export const generateUserVerificationEmail = (userId, name) => {
   const token_mail_verification = jwt.sign(mail, process.env.JWT_SECRET_MAIL);
 
   const url =
-    process.env.BASE_URL +
+    process.env.FRONTEND_BASE_URL +
     "verify-email?id=" +
     userId +
     "&verificationString=" +

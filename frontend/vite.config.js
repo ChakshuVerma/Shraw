@@ -1,6 +1,10 @@
 import path from "path";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import dotenv from "dotenv";
+
+// Load environment variables from .env file
+dotenv.config();
 
 export default defineConfig({
   plugins: [react()],
@@ -8,7 +12,8 @@ export default defineConfig({
     port: 3000,
     proxy: {
       "/api": {
-        target: "http://localhost:5000",
+        // eslint-disable-next-line no-undef
+        target: process.env.VITE_BACKEND_BASE_URL, // Use process.env here
       },
     },
   },
