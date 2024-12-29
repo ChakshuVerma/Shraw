@@ -30,6 +30,7 @@ export const SocketContextProvider = ({ children }) => {
     newSocket = io(connectionURL, {
       query: {
         userId: authUser._id,
+        name: authUser.name,
         conversationId: selectedChat?._id || "",
       },
       // Add reconnection settings

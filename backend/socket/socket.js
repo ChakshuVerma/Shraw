@@ -14,12 +14,12 @@ const io = new Server(server, {
   adapter: createAdapter(redisClient),
 });
 
-const userSocketMap = {}; // {userId: socketId}
+const userSocketMap = {}; // {userId: {socketId, name}}
 const joinedConversations = {}; // {userId: [conversationId]}
 const activeConversations = {}; // {conversationId: {userId}}
 
 const attachSocketReq = (req, _, next) => {
-  const socket = userSocketMap[req.user._id];
+  const socket = userSocketMap[req.user._id].socketId;
   if (socket) {
     req.socket = io.sockets.sockets.get(socket);
   }
@@ -27,16 +27,14 @@ const attachSocketReq = (req, _, next) => {
 };
 
 io.on("connection", (socket) => {
-  const { userId, conversationId } = socket.handshake.query;
+  const { userId, conversationId, name } = socket.handshake.query;
 
-  // console.log("New connection:", { userId, conversationId });
   if (!userId || userId === "undefined" || userId === "null") {
     console.error("Invalid userId:", userId);
     return socket.disconnect(true);
   }
 
-  userSocketMap[userId] = socket.id;
-
+  userSocketMap[userId] = { socketId: socket.id, name };
   if (
     conversationId &&
     conversationId !== "undefined" &&
@@ -51,6 +49,7 @@ io.on("connection", (socket) => {
         ? [...joinedConversations[userId], conversationId]
         : [conversationId];
     }
+    io.to(conversationId).emit("getOnlineUsers", Object.values(userSocketMap));
   }
 
   socket.on("checkRoom", ({ roomId }, callback) => {
@@ -60,7 +59,6 @@ io.on("connection", (socket) => {
 
   // socket.on can be used on both frontend and backend
   socket.on("disconnect", () => {
-    // console.log("User disconnected:", userId);
     delete userSocketMap[userId];
     joinedConversations[userId]?.forEach((conversationId) => {
       delete activeConversations[conversationId][userId];
@@ -69,6 +67,7 @@ io.on("connection", (socket) => {
       }
     });
     delete joinedConversations[userId];
+    io.emit("getOnlineUsers", Object.values(userSocketMap));
   });
 });
 

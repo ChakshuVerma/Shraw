@@ -1,20 +1,39 @@
 import { useSocketContext } from "@/context/socketContext";
-import { useEffect, useState } from "react";
-
-const useGetOnlineUsers = (conversationId) => {
+import { useEffect } from "react";
+import getRandomDarkColor from "@/utils/getRandomDarkColor";
+const useGetOnlineUsers = ({
+  onlineUsers,
+  setOnlineUsers,
+  colorMap,
+  setColorMap,
+}) => {
   const { socket } = useSocketContext();
-  const [onlineUsers, setOnlineUsers] = useState([]);
   useEffect(() => {
-    socket?.emit("getRoomOnlineUsers", conversationId); // getRoomOnlineUsers event is emitted to the server
     socket?.on("getOnlineUsers", (usersList) => {
-      // getOnlineUsers event is emitted from the server
+      updateColorMap({ colorMap, setColorMap, usersList });
       setOnlineUsers(usersList);
     });
 
     return () => socket?.off("getOnlineUsers");
-  }, [socket, conversationId]);
+  }, [socket, setOnlineUsers, colorMap, setColorMap, onlineUsers]);
 
   return onlineUsers;
+};
+
+const updateColorMap = ({ colorMap, setColorMap, usersList }) => {
+  let tempColorMap = colorMap;
+  usersList.forEach((user) => {
+    if (!tempColorMap[user.socketId]) {
+      tempColorMap[user.socketId] = getRandomDarkColor();
+    }
+  });
+  const onlineSocketIds = new Set(usersList.map((user) => user.socketId));
+  Object.keys(tempColorMap).forEach((socketId) => {
+    if (!onlineSocketIds.has(socketId)) {
+      delete tempColorMap[socketId];
+    }
+  });
+  setColorMap(tempColorMap);
 };
 
 export default useGetOnlineUsers;
