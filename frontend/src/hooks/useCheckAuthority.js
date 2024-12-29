@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import { APIEndpoints } from "@/constants/constants";
 
 const useCheckAuthority = (conversationId) => {
   const [loading, setLoading] = useState(false);
@@ -10,7 +11,7 @@ const useCheckAuthority = (conversationId) => {
     const checkAuthority = async () => {
       setLoading(true);
       try {
-        const res = await fetch("/api/conversations/check", {
+        const res = await fetch(`${APIEndpoints.CONVERSATION}/check`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

@@ -12,9 +12,31 @@ const messageSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    message: {
-      type: String,
-      required: true,
+    strokeData: {
+      color: {
+        type: String,
+        required: true,
+      },
+      brushWidth: {
+        type: Number,
+        required: true,
+      },
+      type: {
+        type: String,
+        required: true,
+      },
+      points: [
+        {
+          x: {
+            type: Number,
+            required: true,
+          },
+          y: {
+            type: Number,
+            required: true,
+          },
+        },
+      ],
     },
   },
   { timestamps: true } // timestamps: true will automatically add createdAt and updatedAt fields

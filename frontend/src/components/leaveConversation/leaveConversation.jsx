@@ -2,7 +2,7 @@ import toast from "react-hot-toast";
 import { useContext, useState } from "react";
 import conversationListContext from "@/context/conversationListContext";
 import ConfirmModal from "../modals/confirmModal";
-
+import { APIEndpoints } from "@/constants/constants";
 /* eslint-disable react/prop-types */
 const LeaveConversation = ({ conversationName, conversationId }) => {
   const { conversationListChanged, setConversationListChanged } = useContext(
@@ -14,7 +14,7 @@ const LeaveConversation = ({ conversationName, conversationId }) => {
   const handleClick = async () => {
     if (response) {
       try {
-        const res = await fetch("/api/conversations/leave", {
+        const res = await fetch(`${APIEndpoints.CONVERSATION}/leave`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

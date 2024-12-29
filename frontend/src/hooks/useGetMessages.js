@@ -1,33 +1,27 @@
 import toast from "react-hot-toast";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import useChat from "../zustand/useChat";
+import updateCanvas from "@/utils/updateCanvas";
+import { APIEndpoints } from "@/constants/constants";
 
-const useGetMessages = () => {
-  const [loading, setLoading] = useState(false);
-  const { ctx, setCtx, selectedChat } = useChat();
+const useGetMessages = (canvasRef) => {
+  const { selectedChat } = useChat();
   useEffect(() => {
     const getMessages = async () => {
-      setLoading(true);
-
       try {
-        const res = await fetch(`/api/messages/${selectedChat._id}`);
+        const res = await fetch(`${APIEndpoints.MESSAGE}/${selectedChat._id}`);
         const data = await res.json();
         if (data.err) {
           toast.error(data.err);
         }
-
-        setCtx(data);
+        updateCanvas(canvasRef, data);
       } catch (err) {
         toast.error(err.message);
-      } finally {
-        setLoading(false);
       }
     };
 
     if (selectedChat?._id) getMessages();
-  }, [selectedChat?._id, setCtx]);
-
-  return { loading, ctx };
+  }, [selectedChat?._id, canvasRef]);
 };
 
 export default useGetMessages;

@@ -189,7 +189,7 @@ export const addMembersController = async (req, res) => {
     } else {
       const member = await User.findOne({ email: memberEmail });
 
-      if (!member) {
+      if (!member || !member.isVerified) {
         res.status(404).json({ error: "Email is not registered on Shraw" });
       } else if (conversation.members.includes(member._id)) {
         res

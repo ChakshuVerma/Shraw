@@ -1,5 +1,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { APIEndpoints } from "@/constants/constants";
 
 const useAddMembersToConversation = () => {
   const [loading, setLoading] = useState(false);
@@ -10,13 +11,16 @@ const useAddMembersToConversation = () => {
     if (!success) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/conversations/add/${conversationId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          memberEmail,
-        }),
-      });
+      const res = await fetch(
+        `${APIEndpoints.CONVERSATION}/add/${conversationId}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            memberEmail,
+          }),
+        }
+      );
       const data = await res.json();
 
       if (data.error) {

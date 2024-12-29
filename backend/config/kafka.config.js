@@ -48,7 +48,7 @@ export const produceMessage = async (senderId, receiverId, message) => {
       messages: [
         {
           key: `message-${Date.now()}`,
-          value: JSON.stringify({ senderId, receiverId, newCtx: message }),
+          value: JSON.stringify({ senderId, receiverId, newStroke: message }),
         },
       ],
     });
@@ -68,21 +68,20 @@ export const startConsumer = async () => {
     autoCommit: true,
     eachMessage: async ({ message, pause }) => {
       try {
-        const { senderId, receiverId, newCtx } = JSON.parse(
+        const { senderId, receiverId, newStroke } = JSON.parse(
           message.value.toString()
         );
-        let conversation = await Conversation.findById({ _id: receiverId });
         const newMessage = new Message({
           senderId,
           receiverId,
-          message: newCtx,
+          strokeData: newStroke,
         });
-
-        if (newMessage) {
-          conversation.currCtx = newMessage._id;
-        }
-
-        await Promise.all([conversation.save(), newMessage.save()]); // This is a better way to save multiple documents in parallel
+        await Promise.all([
+          newMessage.save(),
+          Conversation.findByIdAndUpdate(receiverId, {
+            $inc: { totalActions: 1 },
+          }),
+        ]);
       } catch (err) {
         console.log("Error while processing message: ", err);
         // Pause the consumer and restart the consumer after 5 seconds
