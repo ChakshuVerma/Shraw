@@ -2,6 +2,7 @@ import { createContext, useState, useEffect, useContext } from "react";
 import { useAuthContext } from "./authContext";
 import useChat from "@/zustand/useChat";
 import io from "socket.io-client";
+import { APIEndpoints } from "@/constants/constants";
 
 const SocketContext = createContext();
 
@@ -16,8 +17,6 @@ export const SocketContextProvider = ({ children }) => {
   const { authUser } = useAuthContext();
   const { selectedChat } = useChat();
 
-  const connectionURL = "http://localhost:5000";
-
   useEffect(() => {
     if (!authUser || !selectedChat) return;
     let newSocket = null;
@@ -27,7 +26,7 @@ export const SocketContextProvider = ({ children }) => {
       socket.disconnect();
     }
 
-    newSocket = io(connectionURL, {
+    newSocket = io(APIEndpoints.SOCKET_SERVER, {
       query: {
         userId: authUser._id,
         name: authUser.name,

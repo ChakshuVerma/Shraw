@@ -18,4 +18,5 @@ export const APIEndpoints = Object.freeze({
   VERIFY_EMAIL: "/api/auth/verify-email",
   CONVERSATION: "/api/conversations",
   MESSAGE: "/api/messages",
+  SOCKET_SERVER: "http://localhost:5000",
 });
