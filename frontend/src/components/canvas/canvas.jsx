@@ -4,6 +4,7 @@ import { CirclePicker } from "react-color";
 import useGetMessages from "@/hooks/useGetMessages";
 import useListenMessages from "@/hooks/useListenMessages";
 import { useSocketContext } from "@/context/socketContext";
+import useChat from "@/zustand/useChat";
 import {
   Brush,
   Pencil,
@@ -28,7 +29,8 @@ const CanvasPage = () => {
     useDraw();
   useGetMessages(isCanvasReady ? canvasRef : null); // Pass canvasRef only when ready
   useListenMessages(isCanvasReady ? canvasRef : null);
-
+  const { selectedChat } = useChat();
+  console.log(selectedChat);
   useEffect(() => {
     const interval = setInterval(() => {
       if (canvasRef.current) {
@@ -49,6 +51,9 @@ const CanvasPage = () => {
         <Spinner extraStyles={extraStyles} loadingMessage={loadingMessage} />
       ) : (
         <div className="relative w-full h-full overflow-auto">
+          <div className="flex flex-row items-center p-3 space-x-5 fixed top-5 left-5 rounded-md bg-indigo-100 text-3xl font-bold">
+            <span>{selectedChat.name}</span>
+          </div>
           <div className="flex flex-col items-center border p-3 space-y-5 fixed top-[50%] translate-y-[-50%] left-[10px] bg-indigo-100 rounded-md">
             <div className="relative group cursor-pointer">
               <Palette size={30} style={{ strokeWidth: 3, color }} />
