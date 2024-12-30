@@ -17,7 +17,6 @@ const transporter = nodemailer.createTransport({
 
 export const sendMail = async (email, subject, html) => {
   const mailOptions = {
-    // from: process.env.MAIL_USER, // sender address
     from: {
       name: "Shraw",
       address: process.env.MAIL_USER,
@@ -62,6 +61,16 @@ export const addMembersEmail = (
   const htmlBody = `<div>Hello <b>${name}</b>, You have been invited to join the conversaion <b>${conversationName}</b> led by <b>${adminName}</b></div><div><a href=${url}><b>Click</b></a> here to join</div>`;
   const subject = "You have been invited to join a conversation";
   return { subject, htmlBody, url };
+};
+
+export const conversationDeletionInfoEmail = (
+  receiverName,
+  conversationName,
+  adminName
+) => {
+  const htmlBody = `<div>Hello <b>${receiverName}</b>, this is to inform you that the admin <b>${adminName}</b> has deleted the conversation <b>${conversationName}</b> .I hope it was meaningful for you! </div>`;
+  const subject = `Conversation ${conversationName} has been deleted`;
+  return { subject, htmlBody };
 };
 
 export const generateUserVerificationEmail = (userId, name) => {

@@ -1,7 +1,11 @@
 import Conversation from "../models/conversation.models.js";
 import User from "../models/user.models.js";
 import Message from "../models/message.models.js";
-import { sendMail, addMembersEmail } from "../utils/sendMail.js";
+import {
+  sendMail,
+  addMembersEmail,
+  conversationDeletionInfoEmail,
+} from "../utils/sendMail.js";
 
 export const checkConversationMembershipController = async (req, res) => {
   try {
@@ -67,7 +71,9 @@ export const deleteConversationController = async (req, res) => {
     const userId = req.user._id;
     const { conversationId } = req.body;
 
-    const conversation = await Conversation.findById({ _id: conversationId });
+    const conversation = await Conversation.findById({
+      _id: conversationId,
+    }).populate("members");
     if (!conversation) {
       res.status(404).json({ error: "Conversation not found" });
     } else {
@@ -76,7 +82,22 @@ export const deleteConversationController = async (req, res) => {
           error: "You are not authorized to delete this conversation",
         });
       } else {
+        const adminName = req.user.name;
+        const conversationMembers = conversation.members;
+        const emailPromises = conversationMembers.map((member) => {
+          // Step 1: Create a promise for each member
+          const { email: memberEmail, name: receiverName } = member;
+          const { subject, htmlBody } = conversationDeletionInfoEmail(
+            receiverName,
+            conversation.name,
+            adminName
+          );
+          // `sendMail` is called here, returning a promise
+          return sendMail(memberEmail, subject, htmlBody);
+        });
+
         await Promise.all([
+          ...emailPromises,
           Conversation.deleteOne({ _id: conversationId }),
           Message.deleteMany({ receiverId: conversationId }),
         ]);
