@@ -1,11 +1,11 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useAuthContext } from "@/context/authContext";
 import { APIEndpoints } from "@/constants/constants";
+import { useNavigate } from "react-router-dom";
 
 const useSignup = () => {
   const [loading, setLoading] = useState(false);
-  const { setAuthUser } = useAuthContext();
+  const navigate = useNavigate();
 
   const signup = async ({
     name,
@@ -40,11 +40,14 @@ const useSignup = () => {
       const data = await res.json();
       if (data.error) {
         throw new Error(data.error);
-      } else if (data.message) {
-        toast.success(data.message);
       } else {
-        localStorage.setItem("shraw-user", JSON.stringify(data));
-        setAuthUser(data);
+        toast.success(data.message);
+        setTimeout(() => {
+          toast.success("Redirecting to login page");
+        }, 500);
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
       }
     } catch (error) {
       toast.error(error.message);
