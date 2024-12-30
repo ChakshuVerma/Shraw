@@ -1,5 +1,6 @@
 import Conversation from "../models/conversation.models.js";
 import User from "../models/user.models.js";
+import Message from "../models/message.models.js";
 import { sendMail, addMembersEmail } from "../utils/sendMail.js";
 
 export const checkConversationMembershipController = async (req, res) => {
@@ -75,7 +76,10 @@ export const deleteConversationController = async (req, res) => {
           error: "You are not authorized to delete this conversation",
         });
       } else {
-        await Conversation.findByIdAndDelete({ _id: conversationId });
+        await Promise.all([
+          Conversation.deleteOne({ _id: conversationId }),
+          Message.deleteMany({ receiverId: conversationId }),
+        ]);
         res.status(200).json({ message: "Conversation deleted successfully" });
       }
     }

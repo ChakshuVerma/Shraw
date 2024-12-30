@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { CirclePicker } from "react-color";
 import { DrawingMethods } from "@/constants/constants";
-import { set } from "react-hook-form";
 
 const Toolkit = ({
   clear,
