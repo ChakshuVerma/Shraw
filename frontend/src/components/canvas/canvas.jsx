@@ -4,7 +4,6 @@ import useGetMessages from "@/hooks/useGetMessages";
 import useListenMessages from "@/hooks/useListenMessages";
 import { useSocketContext } from "@/context/socketContext";
 import useChat from "@/zustand/useChat";
-import { DrawingMethods } from "@/constants/constants";
 import { Spinner } from "@/components/spinner/Spinner";
 import Tooltip from "../tooltip/Tooltip";
 import Toolkit from "./toolkit";
@@ -12,9 +11,9 @@ import Toolkit from "./toolkit";
 const CanvasPage = () => {
   const { socket } = useSocketContext();
   const [isCanvasReady, setIsCanvasReady] = useState(false);
-  const [color, setColor] = useState("#000");
+  const [color, setColor] = useState("#4caf50");
   const [brushWidth, setBrushWidth] = useState(5);
-  const [type, setType] = useState(DrawingMethods.SCRIBBLE);
+  const [type, setType] = useState(null);
 
   const {
     canvasRef,

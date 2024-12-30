@@ -41,9 +41,10 @@ const drawRectange = (roughCanvas, newStroke) => {
   const length = x2 - x1;
   const width = y2 - y1;
   roughCanvas.rectangle(x1, y1, length, width, {
-    stroke: newStroke.color,
+    stroke: "#000",
     strokeWidth: newStroke.brushWidth,
-    fill: ShapeFill.SOLID,
+    fillStyle: ShapeFill.SOLID,
+    fill: newStroke.color,
   });
 };
 
@@ -58,9 +59,10 @@ const drawEllipse = (roughCanvas, newStroke) => {
   const height = Math.abs(y2 - y1);
 
   roughCanvas.ellipse(centerX, centerY, width, height, {
-    stroke: newStroke.color,
+    stroke: "#000",
     strokeWidth: newStroke.brushWidth,
-    fill: ShapeFill.SOLID,
+    fillStyle: ShapeFill.SOLID,
+    fill: newStroke.color,
   });
 };
 

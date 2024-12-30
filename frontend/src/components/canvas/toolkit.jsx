@@ -1,4 +1,6 @@
 /* eslint-disable react/prop-types */
+
+import { useState, useEffect } from "react";
 import {
   Brush,
   Pencil,
@@ -11,6 +13,7 @@ import {
 } from "lucide-react";
 import { CirclePicker } from "react-color";
 import { DrawingMethods } from "@/constants/constants";
+import { set } from "react-hook-form";
 
 const Toolkit = ({
   clear,
@@ -22,31 +25,67 @@ const Toolkit = ({
   brushWidth,
   setBrushWidth,
 }) => {
+  const [pickerType, setPickerType] = useState(null);
+  const colorPallete = "color";
+  const brushWidthRange = "brushWidth";
+
+  useEffect(() => {
+    setPickerType(type);
+  }, [type]);
+
+  const changePickerType = (type) => {
+    setPickerType((prev) => {
+      return prev === type ? null : type;
+    });
+  };
+
   return (
     <div className="flex flex-col items-center border p-3 space-y-5 fixed top-[50%] translate-y-[-50%] left-[10px] bg-indigo-100 rounded-md">
-      <div className="relative group cursor-pointer">
-        <Palette size={30} style={{ strokeWidth: 3, color }} />
-        <div className="absolute p-2 bg-transparent top-0 left-0 pl-12 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
-          <div className="bg-indigo-100 p-5 rounded-2xl ">
-            <CirclePicker color={color} onChange={(e) => setColor(e.hex)} />
-          </div>
+      <div className="relative">
+        <div
+          className="cursor-pointer"
+          onClick={() => changePickerType(colorPallete)}
+        >
+          <Palette size={30} style={{ strokeWidth: 3, color }} />
         </div>
-      </div>
-      <div className="relative group cursor-pointer">
-        <SlidersHorizontal size={30} style={{ strokeWidth: 3 }} />
-        <div className="absolute p-2 bg-transparent top-0 left-0 pl-12 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
-          <div className="bg-indigo-100 p-2 rounded-2xl">
-            <input
-              type="range"
-              min="1"
-              max="30"
-              defaultValue={brushWidth}
-              onChange={(e) => setBrushWidth(e.target.value)}
-            />
+        {pickerType === colorPallete && (
+          <div className="absolute p-2 bg-transparent top-0 left-10 opacity-100 pointer-events-auto transition-opacity">
+            <div className="bg-indigo-100 p-5 rounded-2xl">
+              <CirclePicker color={color} onChange={(e) => setColor(e.hex)} />
+            </div>
           </div>
-        </div>
+        )}
       </div>
-      <button onClick={() => setType(DrawingMethods.SCRIBBLE)}>
+      <div className="relative">
+        <div
+          className="cursor-pointer"
+          onClick={() => changePickerType(brushWidthRange)}
+        >
+          <SlidersHorizontal size={30} style={{ strokeWidth: 3 }} />
+        </div>
+        {pickerType === brushWidthRange && (
+          <div className="absolute p-2 bg-transparent top-0 left-10 opacity-100 pointer-events-auto transition-opacity">
+            <div className="bg-indigo-100 p-2 rounded-2xl">
+              <input
+                type="range"
+                min="1"
+                max="30"
+                defaultValue={brushWidth}
+                onChange={(e) => setBrushWidth(e.target.value)}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+      <button
+        onClick={() =>
+          setType((prev) => {
+            return prev === DrawingMethods.SCRIBBLE
+              ? null
+              : DrawingMethods.SCRIBBLE;
+          })
+        }
+      >
         <div className="cursor-pointer active:scale-50 active:shadow-xl active:bg-gray-200 transition-all duration-200">
           <Brush
             size={24}
@@ -58,7 +97,13 @@ const Toolkit = ({
           />
         </div>
       </button>
-      <button onClick={() => setType(DrawingMethods.LINE)}>
+      <button
+        onClick={() =>
+          setType((prev) => {
+            return prev === DrawingMethods.LINE ? null : DrawingMethods.LINE;
+          })
+        }
+      >
         <div className="cursor-pointer active:scale-50 active:shadow-xl active:bg-gray-200 transition-all duration-200">
           <Pencil
             size={24}
@@ -70,7 +115,15 @@ const Toolkit = ({
           />
         </div>
       </button>
-      <button onClick={() => setType(DrawingMethods.RECTANGLE)}>
+      <button
+        onClick={() =>
+          setType((prev) => {
+            return prev === DrawingMethods.RECTANGLE
+              ? null
+              : DrawingMethods.RECTANGLE;
+          })
+        }
+      >
         <div className="cursor-pointer active:scale-50 active:shadow-xl active:bg-gray-200 transition-all duration-200 ">
           <RectangleHorizontal
             size={24}
@@ -82,7 +135,15 @@ const Toolkit = ({
           />
         </div>
       </button>
-      <button onClick={() => setType(DrawingMethods.ELLIPSE)}>
+      <button
+        onClick={() =>
+          setType((prev) => {
+            return prev === DrawingMethods.ELLIPSE
+              ? null
+              : DrawingMethods.ELLIPSE;
+          })
+        }
+      >
         <div className="cursor-pointer active:scale-50 active:shadow-xl active:bg-gray-200 transition-all duration-200">
           <Circle
             size={24}

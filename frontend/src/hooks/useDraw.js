@@ -124,9 +124,11 @@ export const useDraw = () => {
       currentPoint.x - startPos.x,
       currentPoint.y - startPos.y,
       {
-        stroke: currStroke.color,
+        stroke: "#000",
         strokeWidth: currStroke.brushWidth,
-        fill: ShapeFill.SOLID,
+        fill: currStroke.color,
+        roughness: 0,
+        fillStyle: ShapeFill.SOLID,
       }
     );
     setCurrStroke((prev) => ({
@@ -144,9 +146,11 @@ export const useDraw = () => {
     const width = Math.abs(currentPoint.x - startPos.x);
 
     roughCanvasRef.current.ellipse(centerX, centerY, width, height, {
-      stroke: currStroke.color,
+      stroke: "#000",
       strokeWidth: currStroke.brushWidth,
-      fill: ShapeFill.SOLID,
+      fill: currStroke.color,
+      roughness: 0,
+      fillStyle: ShapeFill.SOLID,
     });
     setCurrStroke((prev) => ({
       ...prev,
