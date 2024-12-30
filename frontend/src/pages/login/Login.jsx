@@ -20,8 +20,8 @@ const Login = () => {
 
   return (
     <>
-      <div className="bg-gray-50 dark:bg-gray-900">
-        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+      <div className="bg-gray-200 dark:bg-gray-900 h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center px-6 mx-auto w-full h-full lg:py-0">
           <a
             href="#"
             className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
