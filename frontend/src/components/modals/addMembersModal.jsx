@@ -19,7 +19,7 @@ const AddMembersModal = ({ setShowModal, showModal, conversationId }) => {
         id="crud-modal"
         tabIndex="-1"
         aria-hidden="true"
-        className={`${showModal} +  overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 max-h-full  bg-black bg-opacity-60 backdrop-blur-sm transition-opacity duration-300`}
+        className={`${showModal} +  overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-screen md:inset-0   h-screen bg-black bg-opacity-60 backdrop-blur-sm transition-opacity duration-300`}
       >
         <div className="relative p-4 w-full max-w-md max-h-full">
           <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
