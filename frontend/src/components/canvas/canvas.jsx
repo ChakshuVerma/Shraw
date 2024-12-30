@@ -16,8 +16,18 @@ const CanvasPage = () => {
   const [brushWidth, setBrushWidth] = useState(5);
   const [type, setType] = useState(DrawingMethods.SCRIBBLE);
 
-  const { canvasRef, onMouseDown, clear, saveImage, onMouseMove, onMouseUp } =
-    useDraw();
+  const {
+    canvasRef,
+    onMouseDown,
+    clear,
+    saveImage,
+    onMouseMove,
+    onMouseUp,
+    onTouchStart,
+    onTouchMove,
+    onTouchEnd,
+    attachTouchEvents,
+  } = useDraw();
   useGetMessages(isCanvasReady ? canvasRef : null); // Pass canvasRef only when ready
   useListenMessages(isCanvasReady ? canvasRef : null);
   const { selectedChat, onlineUsers, onlineUserColorMap } = useChat();
@@ -25,13 +35,14 @@ const CanvasPage = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       if (canvasRef.current) {
+        attachTouchEvents(canvasRef.current);
         setIsCanvasReady(true);
         clearInterval(interval);
       }
     }, 0);
 
     return () => clearInterval(interval);
-  }, [canvasRef]);
+  }, [canvasRef, attachTouchEvents]);
 
   const extraStyles = "fixed z-50 bg-opacity-60 bg-black";
   const loadingMessage = "Loading last saved context...";
@@ -88,9 +99,14 @@ const CanvasPage = () => {
             onMouseDown={(e) => onMouseDown(e, color, brushWidth, type)}
             onMouseMove={onMouseMove}
             onMouseUp={onMouseUp}
+            onMouseLeave={onMouseUp}
+            onTouchStart={(e) => onTouchStart(e, color, brushWidth, type)}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
             ref={canvasRef}
             width={3000}
             height={2000}
+            draggable="false"
           />
         </div>
       )}

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import useSendMessage from "@/hooks/useSendMessage";
 import rough from "roughjs/bundled/rough.esm";
 import { DrawingMethods, ShapeFill } from "@/constants/constants";
@@ -13,18 +13,39 @@ export const useDraw = () => {
   const [currStroke, setCurrStroke] = useState({});
   const [mouseDown, setMouseDown] = useState(false);
 
-  const onMouseDown = (event, color, brushWidth, type) => {
+  const computePointsInCanvas = useCallback((e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    let x, y;
+
+    if (e.touches) {
+      const touch = e.touches[0];
+      x = touch.clientX - rect.left;
+      y = touch.clientY - rect.top;
+    } else {
+      x = e.clientX - rect.left;
+      y = e.clientY - rect.top;
+    }
+    return { x, y };
+  }, []);
+
+  const initializeCanvas = useCallback((color, brushWidth, type) => {
     if (!canvasRef?.current) return;
     const canvas = canvasRef.current;
     roughCanvasRef.current ??= rough.canvas(canvas);
+
     if (!savedImageRef.current) {
       savedImageRef.current = document.createElement("canvas");
       savedImageRef.current.width = canvas.width;
       savedImageRef.current.height = canvas.height;
     }
+
     const savedCtx = savedImageRef.current.getContext("2d");
     savedCtx.clearRect(0, 0, canvas.width, canvas.height);
     savedCtx.drawImage(canvas, 0, 0);
+
     setCurrStroke({
       points: [],
       color,
@@ -32,10 +53,17 @@ export const useDraw = () => {
       type,
     });
     setMouseDown(true);
-    const initPoint = computePointsInCanvas(event);
-    setStartPos(initPoint);
-    prevPoint.current = initPoint;
-  };
+  }, []);
+
+  const onMouseDown = useCallback(
+    (event, color, brushWidth, type) => {
+      initializeCanvas(color, brushWidth, type);
+      const initPoint = computePointsInCanvas(event);
+      setStartPos(initPoint);
+      prevPoint.current = initPoint;
+    },
+    [initializeCanvas, computePointsInCanvas]
+  );
 
   const scribbleLine = ({ previousPoint, currentPoint }) => {
     const roughCanvas = roughCanvasRef.current;
@@ -130,34 +158,37 @@ export const useDraw = () => {
     clearMessages(canvasRef);
   };
 
-  const onMouseMove = (e) => {
-    if (!mouseDown) return;
-    const currentPoint = computePointsInCanvas(e);
-    switch (currStroke.type) {
-      case DrawingMethods.SCRIBBLE:
-        scribbleLine({ previousPoint: prevPoint.current, currentPoint });
-        break;
-      case DrawingMethods.LINE:
-        drawStraightLine({ currentPoint });
-        break;
-      case DrawingMethods.RECTANGLE:
-        drawRectangle({ currentPoint });
-        break;
-      case DrawingMethods.ELLIPSE:
-        drawEllipse({ currentPoint });
-        break;
-      default:
-        break;
-    }
-  };
+  const onMouseMove = useCallback(
+    (e) => {
+      if (!mouseDown) return;
+      const currentPoint = computePointsInCanvas(e);
+      switch (currStroke.type) {
+        case DrawingMethods.SCRIBBLE:
+          scribbleLine({ previousPoint: prevPoint.current, currentPoint });
+          break;
+        case DrawingMethods.LINE:
+          drawStraightLine({ currentPoint });
+          break;
+        case DrawingMethods.RECTANGLE:
+          drawRectangle({ currentPoint });
+          break;
+        case DrawingMethods.ELLIPSE:
+          drawEllipse({ currentPoint });
+          break;
+        default:
+          break;
+      }
+    },
+    [mouseDown, currStroke.type]
+  );
 
-  const onMouseUp = () => {
+  const onMouseUp = useCallback(() => {
     if (!currStroke?.points) return;
     setMouseDown(false);
     prevPoint.current = null;
     if (currStroke.points.length > 0) sendMessage(currStroke);
     setCurrStroke({});
-  };
+  }, [currStroke, sendMessage]);
 
   const saveImage = () => {
     const canvas = canvasRef.current;
@@ -168,14 +199,60 @@ export const useDraw = () => {
     link.click(); // clicking link to download image
   };
 
-  const computePointsInCanvas = (e) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    return { x, y };
-  };
+  const onTouchStart = useCallback(
+    (e, color, brushWidth, type) => {
+      onMouseDown(e, color, brushWidth, type);
+    },
+    [onMouseDown]
+  );
 
-  return { canvasRef, onMouseDown, clear, saveImage, onMouseMove, onMouseUp };
+  const onTouchMove = useCallback(
+    (e) => {
+      onMouseMove(e);
+    },
+    [onMouseMove]
+  );
+
+  const onTouchEnd = useCallback(() => {
+    onMouseUp();
+  }, [onMouseUp]);
+
+  const setupTouchEvents = useCallback((element) => {
+    if (!element) return;
+
+    element.addEventListener("touchstart", (e) => e.preventDefault(), {
+      passive: false,
+    });
+    element.addEventListener("touchmove", (e) => e.preventDefault(), {
+      passive: false,
+    });
+
+    return () => {
+      element.removeEventListener("touchstart", (e) => e.preventDefault());
+      element.removeEventListener("touchmove", (e) => e.preventDefault());
+    };
+  }, []);
+
+  // Helper method to attach touch events to canvas
+  const attachTouchEvents = useCallback(
+    (canvasElement) => {
+      if (canvasElement) {
+        setupTouchEvents(canvasElement);
+      }
+    },
+    [setupTouchEvents]
+  );
+
+  return {
+    canvasRef,
+    onMouseDown,
+    clear,
+    saveImage,
+    onMouseMove,
+    onMouseUp,
+    onTouchStart,
+    onTouchMove,
+    onTouchEnd,
+    attachTouchEvents,
+  };
 };
