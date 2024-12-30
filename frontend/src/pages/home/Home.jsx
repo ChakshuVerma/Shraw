@@ -26,9 +26,9 @@ const Home = () => {
       <modalToggleContext.Provider
         value={{ conversationListChanged, setConversationListChanged }}
       >
-        <div className="bg-gray-50 dark:bg-gray-900 md:h-screen p-6 flex flex-col">
+        <div className="bg-gray-50 dark:bg-gray-900 flex flex-col p-1 sm:p-6 h-screen">
           <div className="info-container mb-8">
-            <div className="flex justify-between items-start">
+            <div className="flex justify-between items-start pt-4">
               <div className="text-2xl sm:text-4xl font-bold mr-3">
                 Hello, <span className="text-green-900">{nameOfUser}</span>
               </div>
@@ -41,8 +41,8 @@ const Home = () => {
               A simple tool for collaborative drawing
             </div>
           </div>
-          <div className="flex justify-center items-center flex-col bg-slate-100 p-6 h-auto">
-            <div className="flex items-center p-10 justify-center flex-wrap">
+          <div className="flex justify-center items-center flex-col bg-slate-100 p-2 h-full">
+            <div className="flex items-center justify-center flex-wrap w-full overflow-y-auto scrollbar-hide">
               {loading ? (
                 <Spinner
                   loadingMessageStyles={"text-black"}

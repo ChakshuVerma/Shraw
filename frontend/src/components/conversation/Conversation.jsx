@@ -70,7 +70,7 @@ const Conversation = ({ conv }) => {
 
   return (
     <div
-      className="max-w-sm px-6 py-3 border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 m-2 bg-center bg-no-repeat bg-gray-700 bg-blend-multiply w-full"
+      className="w-full max-w-sm px-6 py-3 border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 m-2 bg-center bg-no-repeat bg-gray-700 bg-blend-multiply "
       style={{ backgroundImage: `url(${contentLoaded ? convoCoverPic : ""})` }}
     >
       {!contentLoaded ? (
