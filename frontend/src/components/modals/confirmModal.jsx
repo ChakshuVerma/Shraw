@@ -9,15 +9,17 @@ const ConfirmModal = ({
   noMessage,
   toggalModalMessage,
   setResponse,
+  negativeElement,
 }) => {
   const [open, setOpen] = useState(false);
 
+  const toggleButtonStyle = negativeElement
+    ? "block px-4 py-2 text-sm text- cursor-pointer font-bold bg-red-600 rounded-lg hover:bg-red-700 text-white"
+    : "block px-4 py-2 text-sm text- cursor-pointer font-bold text-red-500 hover:bg-gray-100";
+
   return (
     <>
-      <div
-        onClick={() => setOpen(!open)}
-        className="block px-4 py-2 text-sm text- cursor-pointer font-bold text-red-500 hover:bg-gray-100"
-      >
+      <div onClick={() => setOpen(!open)} className={toggleButtonStyle}>
         {toggalModalMessage}
       </div>
       {open && (
@@ -69,6 +71,7 @@ ConfirmModal.propTypes = {
   noMessage: PropTypes.string.isRequired,
   toggalModalMessage: PropTypes.string.isRequired,
   setResponse: PropTypes.func.isRequired,
+  negativeElement: PropTypes.bool,
 };
 
 export default ConfirmModal;

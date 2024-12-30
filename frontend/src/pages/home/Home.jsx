@@ -28,8 +28,8 @@ const Home = () => {
       >
         <div className="bg-gray-50 dark:bg-gray-900 md:h-screen p-6 flex flex-col">
           <div className="info-container mb-8">
-            <div className="flex justify-between">
-              <div className="text-4xl font-bold">
+            <div className="flex justify-between items-start">
+              <div className="text-2xl sm:text-4xl font-bold mr-3">
                 Hello, <span className="text-green-900">{nameOfUser}</span>
               </div>
               <Logout />

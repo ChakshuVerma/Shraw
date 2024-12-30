@@ -30,6 +30,7 @@ const Logout = () => {
           noMessage={noMessage}
           toggalModalMessage={toggalModalMessage}
           setResponse={setResponse}
+          negativeElement={true}
         ></ConfirmModal>
       )}
     </>
