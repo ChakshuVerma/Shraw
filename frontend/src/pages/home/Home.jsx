@@ -7,6 +7,7 @@ import NewChat from "@/components/conversation/newChat";
 import { useEffect, useState } from "react";
 
 const Home = () => {
+  document.title = "Shraw | Home";
   const { loading, getChats } = useGetConversations();
   const [conversations, setConversations] = useState([]);
   const [conversationListChanged, setConversationListChanged] = useState(false);

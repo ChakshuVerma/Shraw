@@ -5,6 +5,7 @@ import useLogin from "@/hooks/useLogin";
 import { Spinner } from "@/components/spinner/Spinner";
 
 const Login = () => {
+  document.title = "Shraw | Sign in";
   const [user, setUser] = useState({ email: "", password: "" });
 
   const { loading, login } = useLogin();

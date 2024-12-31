@@ -4,6 +4,7 @@ import useSignUp from "../../hooks/useSignup.js";
 import { Spinner } from "@/components/spinner/Spinner.jsx";
 
 const Signup = () => {
+  document.title = "Shraw | Sign up";
   const [user, setUser] = useState({
     name: "",
     email: "",
