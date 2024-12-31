@@ -58,7 +58,7 @@ const CanvasPage = () => {
         <Spinner extraStyles={extraStyles} loadingMessage={loadingMessage} />
       ) : (
         <div className="relative w-full h-full overflow-auto">
-          <div className="flex flex-row items-center p-3 space-x-5 fixed top-5 left-5 rounded-md bg-indigo-100 text-3xl font-bold">
+          <div className="flex flex-row items-center p-3 space-x-5 fixed top-5 left-5 rounded-lg text-start bg-indigo-200 text-3xl font-bold">
             <span>{selectedChat.name}</span>
           </div>
           <div className="flex flex-row items-center p-3 space-x-5 fixed top-5 right-10 rounded-md text-3xl font-bold cursor-pointer">

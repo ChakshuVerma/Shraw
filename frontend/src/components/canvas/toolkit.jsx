@@ -11,6 +11,7 @@ import {
   Palette,
   SlidersHorizontal,
 } from "lucide-react";
+import SmallConfirmModal from "@/components/modals/smallConfirmModal";
 import { CirclePicker } from "react-color";
 import { DrawingMethods } from "@/constants/constants";
 
@@ -28,8 +29,11 @@ const Toolkit = ({
   const colorPallete = "color";
   const brushWidthRange = "brushWidth";
 
+  const [open, setOpen] = useState(false);
+
   useEffect(() => {
     setPickerType(type);
+    setOpen(false);
   }, [type]);
 
   const changePickerType = (type) => {
@@ -38,8 +42,20 @@ const Toolkit = ({
     });
   };
 
+  const confirmMessage = `Are you sure you want to clear the canvas?`;
+  const yesMessage = "Clear";
+  const noMessage = "Cancel";
+  const [clearCanvas, setClearCanvas] = useState(false);
+
+  useEffect(() => {
+    if (clearCanvas) {
+      clear();
+      setClearCanvas(false);
+    }
+  }, [clearCanvas, clear]);
+
   return (
-    <div className="flex flex-col items-center border p-3 space-y-5 fixed top-[50%] translate-y-[-50%] left-[10px] bg-indigo-100 rounded-md">
+    <div className="flex flex-col items-center border py-3 px-1.5 space-y-5 fixed top-[60%] translate-y-[-50%] left-[10px] bg-indigo-200 rounded-2xl">
       <div className="relative">
         <div
           className="cursor-pointer"
@@ -154,11 +170,20 @@ const Toolkit = ({
           />
         </div>
       </button>
-      <button type="button" onClick={clear}>
-        <div className="cursor-pointer active:scale-50 active:shadow-xl active:bg-gray-200 transition-all duration-200">
-          <ListRestart size={24} style={{ strokeWidth: 3 }} />
-        </div>
-      </button>
+      <SmallConfirmModal
+        setResponse={setClearCanvas}
+        confirmMessage={confirmMessage}
+        yesMessage={yesMessage}
+        noMessage={noMessage}
+        open={open}
+        setOpen={setOpen}
+      >
+        <button type="button">
+          <div className="cursor-pointer active:scale-50 active:shadow-xl active:bg-gray-200 transition-all duration-200">
+            <ListRestart size={24} style={{ strokeWidth: 3 }} />
+          </div>
+        </button>
+      </SmallConfirmModal>
       <button type="button" onClick={saveImage}>
         <div className="cursor-pointer active:scale-50 active:shadow-xl active:bg-gray-200 transition-all duration-200">
           <Download size={24} style={{ strokeWidth: 3 }} />

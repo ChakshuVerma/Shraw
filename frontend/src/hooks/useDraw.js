@@ -158,9 +158,9 @@ export const useDraw = () => {
     }));
   };
 
-  const clear = () => {
+  const clear = useCallback(() => {
     clearMessages(canvasRef);
-  };
+  }, [clearMessages]);
 
   const onMouseMove = useCallback(
     (e) => {
