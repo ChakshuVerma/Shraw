@@ -6,7 +6,6 @@ import { useEffect } from "react";
 
 const ChatPage = () => {
   const { selectedChat, setSelectedChat } = useChat();
-  console.log(selectedChat);
   document.title = `Shraw ${selectedChat ? " | " + selectedChat.name : ""}`;
   const conversationId = window.location.href.split("deep-dive/")[1];
   const { isAuthorized, loading, conversationDetails } =
