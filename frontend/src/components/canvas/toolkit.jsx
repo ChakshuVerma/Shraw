@@ -27,9 +27,15 @@ const Toolkit = ({
   setBrushWidth,
 }) => {
   const [pickerType, setPickerType] = useState(null);
+  const [openHamMenu, setOpenHamMenu] = useState(false);
+  const [clearCanvas, setClearCanvas] = useState(false);
+  const [openClearCanvasModal, setOpenClearCanvasModal] = useState(false);
+
   const colorPallete = "color";
   const brushWidthRange = "brushWidth";
-  const [openHamMenu, setOpenHamMenu] = useState(false);
+  const confirmMessage = `Are you sure you want to clear the canvas?`;
+  const yesMessage = "Clear";
+  const noMessage = "Cancel";
 
   useEffect(() => {
     const handleResize = () => {
@@ -41,8 +47,6 @@ const Toolkit = ({
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  const [openClearCanvasModal, setOpenClearCanvasModal] = useState(false);
 
   useEffect(() => {
     setPickerType(type);
@@ -59,11 +63,6 @@ const Toolkit = ({
     setOpenHamMenu((prev) => !prev);
     setOpenClearCanvasModal(false);
   };
-
-  const confirmMessage = `Are you sure you want to clear the canvas?`;
-  const yesMessage = "Clear";
-  const noMessage = "Cancel";
-  const [clearCanvas, setClearCanvas] = useState(false);
 
   useEffect(() => {
     if (clearCanvas) {

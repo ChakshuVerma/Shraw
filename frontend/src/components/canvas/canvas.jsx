@@ -35,14 +35,14 @@ const CanvasPage = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       if (canvasRef.current) {
-        attachTouchEvents(canvasRef.current);
+        attachTouchEvents(canvasRef.current, type);
         setIsCanvasReady(true);
         clearInterval(interval);
       }
     }, 0);
 
     return () => clearInterval(interval);
-  }, [canvasRef, attachTouchEvents]);
+  }, [canvasRef, attachTouchEvents, type]);
 
   const extraStyles = "fixed z-50 bg-opacity-60 bg-black";
   const loadingMessage = "Loading last saved context...";

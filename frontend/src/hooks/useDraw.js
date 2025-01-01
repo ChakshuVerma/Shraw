@@ -221,27 +221,23 @@ export const useDraw = () => {
     onMouseUp();
   }, [onMouseUp]);
 
-  const setupTouchEvents = useCallback((element) => {
-    if (!element) return;
-
-    element.addEventListener("touchstart", (e) => e.preventDefault(), {
-      passive: false,
-    });
-    element.addEventListener("touchmove", (e) => e.preventDefault(), {
-      passive: false,
-    });
-
-    return () => {
-      element.removeEventListener("touchstart", (e) => e.preventDefault());
-      element.removeEventListener("touchmove", (e) => e.preventDefault());
-    };
+  const setupTouchEvents = useCallback((element, type) => {
+    if (type === null) {
+      // Make canvas scrollable
+      element.style.touchAction = "auto";
+      element.style.overscrollBehavior = "auto";
+    } else {
+      // Make canvas non-scrollable
+      element.style.touchAction = "none";
+      element.style.overscrollBehavior = "none";
+    }
   }, []);
 
   // Helper method to attach touch events to canvas
   const attachTouchEvents = useCallback(
-    (canvasElement) => {
+    (canvasElement, type) => {
       if (canvasElement) {
-        setupTouchEvents(canvasElement);
+        setupTouchEvents(canvasElement, type);
       }
     },
     [setupTouchEvents]
