@@ -23,10 +23,7 @@ const ConfirmModal = ({
         {toggalModalMessage}
       </div>
       {open && (
-        <div
-          tabIndex="-1"
-          className="overflow-y-auto overflow-x-hidden fixed flex top-0 right-0 left-0 z-50 justify-center items-center w-screen md:inset-0 h-screen  bg-black bg-opacity-60 backdrop-blur-sm transition-opacity duration-300"
-        >
+        <div className="fixed flex top-0 right-0 left-0 z-50 justify-center items-center w-screen h-screen bg-black bg-opacity-60 backdrop-blur-sm">
           <div className="relative p-4 w-full max-w-md max-h-full">
             <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 px-2">
               <button
@@ -41,22 +38,24 @@ const ConfirmModal = ({
                 <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
                   {confirmMessage}
                 </h3>
-                <Button
-                  variant="destructive"
-                  onClick={() => {
-                    setResponse(true), setOpen(false);
-                  }}
-                >
-                  {yesMessage}
-                </Button>
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    setResponse(false), setOpen(false);
-                  }}
-                >
-                  {noMessage}
-                </Button>
+                <div className="flex justify-center space-x-4 flex-wrap">
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      setResponse(true), setOpen(false);
+                    }}
+                  >
+                    {yesMessage}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setResponse(false), setOpen(false);
+                    }}
+                  >
+                    {noMessage}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

@@ -17,9 +17,13 @@ const NewConversaionModal = ({ showModal, setShowModal }) => {
   const { loading, createNewConversation } = useNewConversation();
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setNewConversation({
       ...newConversation,
-      [e.target.name]: e.target.value.trimStart(),
+      [name]:
+        name === "chatName"
+          ? value.trimStart().toUpperCase()
+          : value.trimStart(),
     });
   };
 

@@ -7,7 +7,8 @@ import useChat from "@/zustand/useChat";
 import { Spinner } from "@/components/spinner/Spinner";
 import Tooltip from "../tooltip/Tooltip";
 import Toolkit from "./toolkit";
-
+import { Link } from "react-router-dom";
+import shrawIcon from "../../../public/shraw_icon.svg";
 const CanvasPage = () => {
   const { socket } = useSocketContext();
   const [isCanvasReady, setIsCanvasReady] = useState(false);
@@ -58,31 +59,44 @@ const CanvasPage = () => {
         <Spinner extraStyles={extraStyles} loadingMessage={loadingMessage} />
       ) : (
         <div className="relative w-full h-full overflow-auto">
-          <div className="flex flex-row items-center p-3 space-x-5 fixed top-5 left-5 rounded-lg text-start bg-indigo-200 text-3xl font-bold">
-            <span>{selectedChat.name}</span>
-          </div>
-          <div className="flex flex-row items-center p-3 space-x-5 fixed top-5 right-10 rounded-md text-3xl font-bold cursor-pointer">
-            <div className="flex -space-x-4 rtl:space-x-reverse">
-              {onlineUsers.map((onlineUser) => (
-                <Tooltip
-                  message={`${onlineUser.name} ${
-                    onlineUser.socketId === socket.id ? " (You)" : " "
-                  }`}
-                  key={onlineUser.socketId}
-                >
-                  <div
-                    className="w-10 h-10 border-2 border-black rounded-full dark:border-gray-800 text-sm flex items-center 
-                 text-center text-white pl-2 group-hover:scale-110 transition-all duration-200 group-hover:border-3 "
-                    style={{
-                      backgroundColor: onlineUserColorMap[onlineUser.socketId],
-                    }}
-                  >
-                    {getInitials(onlineUser.name)}
-                  </div>
-                </Tooltip>
-              ))}
+          <nav className="fixed flex flex-row items-start justify-between w-full flex-wrap pointer-events-none bg-gray-500 bg-opacity-60 backdrop-blur-sm">
+            <div className="p-3 flex-grow">
+              <Link to="/" className="pointer-events-auto text-3xl">
+                <img
+                  src={shrawIcon}
+                  alt="Shraw Icon"
+                  height={30}
+                  width={30}
+                  className="inline mr-1"
+                />
+                {"Shraw | "}
+              </Link>
+              <span>{selectedChat.name}</span>
             </div>
-          </div>
+            <div className="flex flex-row items-center space-x-5 rounded-md font-bold cursor-pointer p-3">
+              <div className="flex -space-x-4 rtl:space-x-reverse">
+                {onlineUsers.map((onlineUser) => (
+                  <Tooltip
+                    message={`${onlineUser.name} ${
+                      onlineUser.socketId === socket.id ? " (You)" : " "
+                    }`}
+                    key={onlineUser.socketId}
+                  >
+                    <div
+                      className="w-10 h-10 border-2 border-black rounded-full dark:border-gray-800 text-sm flex items-center 
+                 text-center text-white pl-2 group-hover:scale-110 transition-all duration-200 group-hover:border-3 "
+                      style={{
+                        backgroundColor:
+                          onlineUserColorMap[onlineUser.socketId],
+                      }}
+                    >
+                      {getInitials(onlineUser.name)}
+                    </div>
+                  </Tooltip>
+                ))}
+              </div>
+            </div>
+          </nav>
           <Toolkit
             clear={clear}
             saveImage={saveImage}
@@ -103,7 +117,7 @@ const CanvasPage = () => {
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
             ref={canvasRef}
-            width={3000}
+            width={5000}
             height={2000}
             draggable="false"
           />
