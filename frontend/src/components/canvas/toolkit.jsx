@@ -73,7 +73,7 @@ const Toolkit = ({
 
   return (
     <>
-      <div className="flex flex-col items-center py-5 px-1.5 fixed bg-gray-300 rounded-2xl top-32 left-1 sm:top-[60%] sm:translate-y-[-50%] sm:left-[10px] bg-opacity-60 backdrop-blur-sm">
+      <div className="flex flex-col items-center py-1 px-1 sm:py-5 sm:px-1.5 fixed bg-gray-300 rounded-2xl top-32 left-1 sm:top-[60%] sm:translate-y-[-50%] sm:left-[10px] bg-opacity-60 backdrop-blur-sm">
         <div className="p-2 cursor-pointer sm:hidden" onClick={toggleHamMenu}>
           <Menu size={30} style={{ strokeWidth: 3 }} />
         </div>
