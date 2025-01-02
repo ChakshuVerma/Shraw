@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import SmallConfirmModal from "@/components/modals/smallConfirmModal";
 import { CirclePicker } from "react-color";
-import { DrawingMethods } from "@/constants/constants";
+import { DrawingActions } from "@/constants/constants";
 
 const Toolkit = ({
   clear,
@@ -121,9 +121,9 @@ const Toolkit = ({
             <button
               onClick={() =>
                 setType((prev) => {
-                  return prev === DrawingMethods.SCRIBBLE
+                  return prev === DrawingActions.DRAW_SCRIBBLE
                     ? null
-                    : DrawingMethods.SCRIBBLE;
+                    : DrawingActions.DRAW_SCRIBBLE;
                 })
               }
             >
@@ -132,8 +132,9 @@ const Toolkit = ({
                   size={24}
                   style={{
                     strokeWidth: 3,
-                    color: type === DrawingMethods.SCRIBBLE ? color : "black",
-                    fill: type === DrawingMethods.SCRIBBLE && color,
+                    color:
+                      type === DrawingActions.DRAW_SCRIBBLE ? color : "black",
+                    fill: type === DrawingActions.DRAW_SCRIBBLE && color,
                   }}
                 />
               </div>
@@ -141,9 +142,9 @@ const Toolkit = ({
             <button
               onClick={() =>
                 setType((prev) => {
-                  return prev === DrawingMethods.LINE
+                  return prev === DrawingActions.DRAW_LINE
                     ? null
-                    : DrawingMethods.LINE;
+                    : DrawingActions.DRAW_LINE;
                 })
               }
             >
@@ -152,8 +153,8 @@ const Toolkit = ({
                   size={24}
                   style={{
                     strokeWidth: 3,
-                    color: type === DrawingMethods.LINE ? color : "black",
-                    fill: type === DrawingMethods.LINE && color,
+                    color: type === DrawingActions.DRAW_LINE ? color : "black",
+                    fill: type === DrawingActions.DRAW_LINE && color,
                   }}
                 />
               </div>
@@ -161,9 +162,9 @@ const Toolkit = ({
             <button
               onClick={() =>
                 setType((prev) => {
-                  return prev === DrawingMethods.RECTANGLE
+                  return prev === DrawingActions.DRAW_RECTANGLE
                     ? null
-                    : DrawingMethods.RECTANGLE;
+                    : DrawingActions.DRAW_RECTANGLE;
                 })
               }
             >
@@ -172,8 +173,9 @@ const Toolkit = ({
                   size={24}
                   style={{
                     strokeWidth: 3,
-                    color: type === DrawingMethods.RECTANGLE ? color : "black",
-                    fill: type === DrawingMethods.RECTANGLE && color,
+                    color:
+                      type === DrawingActions.DRAW_RECTANGLE ? color : "black",
+                    fill: type === DrawingActions.DRAW_RECTANGLE && color,
                   }}
                 />
               </div>
@@ -181,9 +183,9 @@ const Toolkit = ({
             <button
               onClick={() =>
                 setType((prev) => {
-                  return prev === DrawingMethods.ELLIPSE
+                  return prev === DrawingActions.DRAW_ELLIPSE
                     ? null
-                    : DrawingMethods.ELLIPSE;
+                    : DrawingActions.DRAW_ELLIPSE;
                 })
               }
             >
@@ -192,8 +194,9 @@ const Toolkit = ({
                   size={24}
                   style={{
                     strokeWidth: 3,
-                    color: type === DrawingMethods.ELLIPSE ? color : "black",
-                    fill: type === DrawingMethods.ELLIPSE && color,
+                    color:
+                      type === DrawingActions.DRAW_ELLIPSE ? color : "black",
+                    fill: type === DrawingActions.DRAW_ELLIPSE && color,
                   }}
                 />
               </div>

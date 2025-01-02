@@ -2,6 +2,7 @@ import { Server } from "socket.io";
 import http from "http";
 import express from "express";
 import { redisSubClient } from "../config/redis.config.js";
+import { webSocketChannels } from "../constants/constants.js";
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -20,7 +21,12 @@ redisSubClient.on("message", (channel, message) => {
     const data = JSON.parse(message);
     // Broadcast the message to relevant clients using socket.io
     if (data?.receiverId) {
-      io.to(data.receiverId).emit("newMessage", data);
+      const channelName = data.webSocketChannel;
+      const chatId = data.receiverId;
+      delete data.webSocketChannel;
+      delete data.receiverId;
+      delete data.senderId;
+      io.to(chatId).emit(channelName, data);
     }
   }
 });
@@ -37,7 +43,7 @@ const attachSocketReq = (req, _, next) => {
   next();
 };
 
-io.on("connection", (socket) => {
+io.on(webSocketChannels.connection, (socket) => {
   const { userId, conversationId, name } = socket.handshake.query;
 
   if (!userId || userId === "undefined" || userId === "null") {
@@ -63,18 +69,13 @@ io.on("connection", (socket) => {
 
     // Emit the online users list immediately after user joins the room
     io.to(conversationId).emit(
-      "getOnlineUsers",
+      webSocketChannels.getOnlineUsers,
       Object.values(activeConversations[conversationId])
     );
   }
 
-  socket.on("checkRoom", ({ roomId }, callback) => {
-    const isInRoom = !!io.sockets.adapter.rooms.get(roomId)?.has(socket.id);
-    callback(isInRoom);
-  });
-
   // socket.on can be used on both frontend and backend
-  socket.on("disconnect", () => {
+  socket.on(webSocketChannels.disconnect, () => {
     delete userSocketMap[userId];
     joinedConversations[userId]?.forEach((conversationId) => {
       delete activeConversations[conversationId][userId];
@@ -84,7 +85,7 @@ io.on("connection", (socket) => {
     });
     delete joinedConversations[userId];
     io.to(conversationId).emit(
-      "getOnlineUsers",
+      webSocketChannels.getOnlineUsers,
       Object.values(activeConversations[conversationId])
     );
   });

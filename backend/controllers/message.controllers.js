@@ -2,6 +2,7 @@ import Message from "../models/message.models.js";
 import Conversation from "../models/conversation.models.js";
 import { produceMessage } from "../config/kafka.config.js";
 import { redisPubClient } from "../config/redis.config.js";
+import { webSocketChannels } from "../constants/constants.js";
 
 export const sendMessageController = async (req, res) => {
   try {
@@ -12,7 +13,7 @@ export const sendMessageController = async (req, res) => {
     // This is how you publish a message to Redis
     await redisPubClient.publish(
       process.env.REDIS_CHANNEL,
-      JSON.stringify({ senderId, receiverId, newStroke })
+      JSON.stringify({ senderId, receiverId, newStroke, webSocketChannel: webSocketChannels.newMessage })
     );
     produceMessage(senderId, receiverId, newStroke); // This is how you produce a message to Kafka
     socket.to(receiverId).emit("newMessage", newStroke); // This is how you emit an event to a specific room (chatRoom in this case)
@@ -26,10 +27,15 @@ export const sendMessageController = async (req, res) => {
 export const clearMessageController = async (req, res) => {
   try {
     const { id: receiverId } = req.params;
+    const senderId = req.user._id;
     Promise.all([
       Message.deleteMany({ receiverId: receiverId }),
       Conversation.findByIdAndUpdate(receiverId, { $inc: { totalActions: 1 } }),
     ]);
+    await redisPubClient.publish(
+      process.env.REDIS_CHANNEL,
+      JSON.stringify({ senderId, receiverId, webSocketChannel: webSocketChannels.clearCanvas })
+    );
     const socket = req.socket;
     socket.to(receiverId).emit("clearCanvas");
     res.status(200).json("Messages cleared");

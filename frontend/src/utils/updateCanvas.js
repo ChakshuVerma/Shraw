@@ -1,5 +1,5 @@
 import rough from "roughjs/bundled/rough.esm";
-import { DrawingMethods, ShapeFill } from "@/constants/constants";
+import { DrawingActions, ShapeFill } from "@/constants/constants";
 
 const updateCanvas = (canvasRef, strokes) => {
   if (!canvasRef?.current || strokes.length === 0) return;
@@ -7,16 +7,16 @@ const updateCanvas = (canvasRef, strokes) => {
   const roughCanvas = rough.canvas(canvasCtx.canvas);
   strokes.forEach((newStroke) => {
     switch (newStroke.type) {
-      case DrawingMethods.SCRIBBLE:
+      case DrawingActions.DRAW_SCRIBBLE:
         drawScribble(roughCanvas, newStroke);
         break;
-      case DrawingMethods.RECTANGLE:
+      case DrawingActions.DRAW_RECTANGLE:
         drawRectange(roughCanvas, newStroke);
         break;
-      case DrawingMethods.ELLIPSE:
+      case DrawingActions.DRAW_ELLIPSE:
         drawEllipse(roughCanvas, newStroke);
         break;
-      case DrawingMethods.LINE:
+      case DrawingActions.DRAW_LINE:
         drawLine(roughCanvas, newStroke);
         break;
       default:

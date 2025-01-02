@@ -42,6 +42,7 @@ export const loginUserController = async (req, res) => {
         _id: foundUser._id,
         name: foundUser.name,
         email: foundUser.email,
+        username: foundUser.username,
       });
     }
   } catch (err) {

@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback } from "react";
 import useSendMessage from "@/hooks/useSendMessage";
 import rough from "roughjs/bundled/rough.esm";
-import { DrawingMethods, ShapeFill } from "@/constants/constants";
+import { DrawingActions, ShapeFill } from "@/constants/constants";
 
 export const useDraw = () => {
   const { sendMessage, clearMessages } = useSendMessage();
@@ -167,16 +167,16 @@ export const useDraw = () => {
       if (!mouseDown) return;
       const currentPoint = computePointsInCanvas(e);
       switch (currStroke.type) {
-        case DrawingMethods.SCRIBBLE:
+        case DrawingActions.DRAW_SCRIBBLE:
           scribbleLine({ previousPoint: prevPoint.current, currentPoint });
           break;
-        case DrawingMethods.LINE:
+        case DrawingActions.DRAW_LINE:
           drawStraightLine({ currentPoint });
           break;
-        case DrawingMethods.RECTANGLE:
+        case DrawingActions.DRAW_RECTANGLE:
           drawRectangle({ currentPoint });
           break;
-        case DrawingMethods.ELLIPSE:
+        case DrawingActions.DRAW_ELLIPSE:
           drawEllipse({ currentPoint });
           break;
         default:

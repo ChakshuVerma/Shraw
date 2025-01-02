@@ -1,8 +1,9 @@
-export const DrawingMethods = Object.freeze({
-  LINE: "line",
-  RECTANGLE: "rectangle",
-  ELLIPSE: "ellipse",
-  SCRIBBLE: "scribble",
+export const DrawingActions = Object.freeze({
+  DRAW_LINE: "line",
+  DRAW_RECTANGLE: "rectangle",
+  DRAW_ELLIPSE: "ellipse",
+  DRAW_SCRIBBLE: "scribble",
+  TOOL_MOVE: "move",
 });
 
 export const ShapeFill = Object.freeze({
