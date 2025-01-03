@@ -6,7 +6,7 @@ import modalToggleContext from "@/context/conversationListContext";
 import NewChat from "@/components/conversation/newChat";
 import { useEffect, useState } from "react";
 
-const Home = () => {
+const HomeSignedIn = () => {
   document.title = "Shraw | Home";
   const { loading, getChats } = useGetConversations();
   const [conversations, setConversations] = useState([]);
@@ -70,4 +70,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomeSignedIn;

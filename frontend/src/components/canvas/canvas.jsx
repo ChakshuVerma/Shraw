@@ -8,7 +8,7 @@ import { Spinner } from "@/components/spinner/Spinner";
 import Tooltip from "../tooltip/Tooltip";
 import Toolkit from "./toolkit";
 import { Link } from "react-router-dom";
-import shrawIcon from "../../../public/shraw_icon.svg";
+import shrawIcon from "../../../public/shraw_icon.png";
 const CanvasPage = () => {
   const { socket } = useSocketContext();
   const [isCanvasReady, setIsCanvasReady] = useState(false);
