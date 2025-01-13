@@ -9,7 +9,7 @@ const Logout = () => {
 
   useEffect(() => {
     if (response) logout();
-  });
+  }, [response, logout]);
 
   const confirmMessage = `Are you sure you want to logout?`;
   const yesMessage = "Logout from Shraw";

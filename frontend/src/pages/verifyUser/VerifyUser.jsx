@@ -29,14 +29,11 @@ const VerifyUser = () => {
           throw new Error(data.error);
         } else if (data.message) {
           setVerified(true);
-          toast.success(data.message);
+          toast.success(data.message + "... Redirecting to login page");
         }
       } catch (error) {
         toast.error(error.message);
       } finally {
-        setTimeout(() => {
-          toast.success("Redirecting to login page");
-        }, 100);
         setTimeout(() => {
           navigate("/login");
         }, 2000);

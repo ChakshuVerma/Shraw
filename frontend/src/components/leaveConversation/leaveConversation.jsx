@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import conversationListContext from "@/context/conversationListContext";
 import ConfirmModal from "../modals/confirmModal";
 import { APIEndpoints } from "@/constants/constants";
@@ -11,31 +11,33 @@ const LeaveConversation = ({ conversationName, conversationId }) => {
 
   const [response, setResponse] = useState(false);
 
-  const handleClick = async () => {
-    if (response) {
-      try {
-        const res = await fetch(`${APIEndpoints.CONVERSATION}/leave`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            conversationId,
-          }),
-        });
+  useEffect(() => {
+    if (!response) return;
+    const leaveConvo = async () => {
+      const res = await fetch(`${APIEndpoints.CONVERSATION}/leave`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          conversationId,
+        }),
+      });
 
-        const data = await res.json();
+      const data = await res.json();
 
-        if (data.error) {
-          toast.error(data.error);
-        } else {
-          setConversationListChanged(!conversationListChanged);
-          toast.success(data.message);
-        }
-      } catch (error) {
-        toast.error(error.message);
+      if (data.error) {
+        throw new Error(data.error);
+      } else {
+        setConversationListChanged(!conversationListChanged);
+        return data;
       }
-    }
-  };
-  handleClick();
+    };
+    toast.promise(leaveConvo(), {
+      loading: "Leaving conversation...",
+      success: (data) => data.message,
+      error: (err) => err.message,
+    });
+    setResponse(false);
+  }, [response]);
 
   const confirmMessage = `Are you sure you want to leave ${conversationName}? You won't be able to retrieve the data from this conversation`;
   const yesMessage = "Leave Conversation";

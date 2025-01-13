@@ -31,14 +31,11 @@ const JoinConversation = () => {
           throw new Error(data.error);
         } else if (data.message) {
           setConversationJoined(true);
-          toast.success(data.message);
+          toast.success(data.message + "... Redirecting to home page");
         }
       } catch (error) {
         toast.error(error.message);
       } finally {
-        setTimeout(() => {
-          toast.success("Redirecting to home page");
-        }, 100);
         setTimeout(() => {
           navigate("/");
         }, 2000);

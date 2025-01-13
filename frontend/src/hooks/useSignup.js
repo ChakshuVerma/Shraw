@@ -7,13 +7,7 @@ const useSignup = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const signup = async ({
-    name,
-    username,
-    password,
-    confirmPassword,
-    email,
-  }) => {
+  const signup = ({ name, username, password, confirmPassword, email }) => {
     const success = handleInputErrors({
       name,
       username,
@@ -23,8 +17,8 @@ const useSignup = () => {
     });
     if (!success) return;
 
-    setLoading(true);
-    try {
+    const actuallySignUp = async () => {
+      setLoading(true);
       const res = await fetch(APIEndpoints.SIGNUP, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -40,20 +34,22 @@ const useSignup = () => {
       const data = await res.json();
       if (data.error) {
         throw new Error(data.error);
-      } else {
-        toast.success(data.message);
-        setTimeout(() => {
-          toast.success("Redirecting to login page");
-        }, 500);
+      }
+      return data;
+    };
+
+    toast.promise(actuallySignUp(), {
+      loading: "Signing up...",
+      success: (data) => {
         setTimeout(() => {
           navigate("/login");
-        }, 2000);
-      }
-    } catch (error) {
-      toast.error(error.message);
-    } finally {
-      setLoading(false);
-    }
+        }, 3000);
+        return data.message + "... Redirecting to login page";
+      },
+      error: (err) => err.message,
+    });
+
+    setLoading(false);
   };
 
   return { loading, signup };

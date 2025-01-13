@@ -11,27 +11,33 @@ const useNewConversation = () => {
     description = description.trim();
     const success = handleInputErrors({ chatName, description });
     if (!success) return;
-    setLoading(true);
-    try {
-      const res = await fetch(`${APIEndpoints.CONVERSATION}/create`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: chatName,
-          description,
-        }),
-      });
-      const data = await res.json();
 
-      if (data.error) {
-        throw new Error(data.error);
+    const actuallyCreateChatroom = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`${APIEndpoints.CONVERSATION}/create`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: chatName,
+            description,
+          }),
+        });
+        const data = await res.json();
+
+        if (data.error) {
+          throw new Error(data.error);
+        }
+      } finally {
+        setLoading(false);
       }
-      toast.success("Chatroom created successfully");
-    } catch (err) {
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
+    };
+
+    await toast.promise(actuallyCreateChatroom(), {
+      loading: "Creating chatroom",
+      success: "Chatroom created successfully",
+      error: (err) => err.message,
+    });
   };
   return { loading, createNewConversation };
 };

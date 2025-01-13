@@ -7,25 +7,28 @@ const useLogout = () => {
   const [loading, setLoading] = useState(false);
   const { setAuthUser } = useAuthContext();
 
-  const logout = async () => {
+  const logout = () => {
     setLoading(true);
-    try {
+    const actuallyLogOut = async () => {
       const res = await fetch(APIEndpoints.LOGOUT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });
-
       const data = await res.json();
       if (data.error) {
         throw new Error(data.error);
       }
       localStorage.removeItem("shraw-user");
       setAuthUser(null);
-    } catch (error) {
-      toast.error(error.message);
-    } finally {
-      setLoading(false);
-    }
+    };
+
+    toast.promise(actuallyLogOut(), {
+      loading: "Logging out",
+      success: "Logged out successfully",
+      error: (err) => err,
+    });
+
+    setLoading(false);
   };
 
   return { loading, logout };

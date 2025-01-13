@@ -19,13 +19,13 @@ export const Spinner = ({
       ) : (
         <>
           <div
-            className={`h-4 w-4 rounded-full animate-bounce [animation-delay:-0.3s] ${dotStyles}`}
+            className={`h-3 w-3 rounded-full animate-bounce [animation-delay:-0.3s] ${dotStyles}`}
           ></div>
           <div
-            className={`h-4 w-4 rounded-full animate-bounce [animation-delay:-0.15s] ${dotStyles}`}
+            className={`h-3 w-3 rounded-full animate-bounce [animation-delay:-0.15s] ${dotStyles}`}
           ></div>
           <div
-            className={`h-4 w-4 rounded-full animate-bounce ${dotStyles}`}
+            className={`h-3 w-3 rounded-full animate-bounce ${dotStyles}`}
           ></div>
         </>
       )}
